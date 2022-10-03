@@ -100,35 +100,35 @@ blueprint:
 
 trigger:
   - platform: time
-    at: "01:02"
+    at: "01:01"
     id: appreciation_reference_AM
 
   - platform: time
-    at: "04:02"
+    at: "04:00"
     id: normal_AM_1
 
   - platform: time
-    at: "06:02"
+    at: "06:00"
     id: reference_AM
 
   - platform: time
-    at: "10:02"
+    at: "10:00"
     id: normal_AM_2
 
   - platform: time
-    at: "12:02"
+    at: "12:01"
     id: appreciation_reference_PM
 
   - platform: time
-    at: "15:02"
+    at: "15:00"
     id: normal_PM_1
 
   - platform: time
-    at: "17:02"
+    at: "17:00"
     id: reference_PM
 
   - platform: time
-    at: "21:02"
+    at: "21:00"
     id: normal_PM_2
 
   - platform: state
