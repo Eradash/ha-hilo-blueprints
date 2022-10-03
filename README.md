@@ -21,3 +21,11 @@ challenge_in_progress:
 ## Contributing
 
 I need help abstracting the Hilo integration. For now, a sensor is still needed to know if a challenge is in progress or not, this need to change.
+
+## To do:
+
+This list is not complete, if you have any ideas, please send a Pull request :)
+
+* Add a way to import easily the Blueprints to Home Assistant
+* Add a way to not have the Hilo integration (for those with only the Hydro-Québec way of challenges)
+* Add Blueprints for notifications with estimates and results
