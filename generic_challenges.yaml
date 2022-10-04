@@ -218,19 +218,32 @@ action:
                           - service: switch.turn_on
                             target:
                               entity_id: !input water_heater
-      - conditions:
-          condition: state
-          entity_id: !input challenge_entity
-          state: normal
-        sequence:
-          - service: climate.set_temperature
-            data:
-              temperature: !input normal_temp
-            target:
-              entity_id: !input thermostats
-          - choose:
-              - conditions: "{{ water_heater|length > 0 }}"
+
+              - conditions:
+                  condition: state
+                  entity_id: !input challenge_entity
+                  state: normal
                 sequence:
-                  - service: switch.turn_on
+                  - service: climate.set_temperature
+                    data:
+                      temperature: !input normal_temp
                     target:
-                      entity_id: !input water_heater
+                      entity_id: !input thermostats
+                  - choose:
+                      - conditions: "{{ water_heater|length > 0 }}"
+                        sequence:
+                          - service: switch.turn_on
+                            target:
+                              entity_id: !input water_heater
+    default:
+      - service: climate.set_temperature
+        data:
+          temperature: !input normal_temp
+        target:
+          entity_id: !input thermostats
+      - choose:
+          - conditions: "{{ water_heater|length > 0 }}"
+            sequence:
+              - service: switch.turn_on
+                target:
+                  entity_id: !input water_heater

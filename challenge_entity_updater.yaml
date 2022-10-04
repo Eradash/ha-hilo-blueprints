@@ -18,6 +18,20 @@ blueprint:
         entity:
           domain: sensor
 
+    hilo_or_hydro:
+      name: Hilo or Hydro-Québec
+      description: Use challenges hours from Hilo or Hydro-Québec
+      selector:
+        select:
+          options:
+            - label: Hydro
+              value: Hydro
+            - label: Hilo
+              value: Hilo
+
+variables:
+  hilo_or_hydro: !input hilo_or_hydro
+
 trigger:
   - platform: time
     at: "01:01"
@@ -30,6 +44,9 @@ trigger:
 
   - platform: time
     at: "06:00"
+
+  - platform: time
+    at: "09:00"
 
   - platform: time
     at: "10:00"
@@ -45,6 +62,9 @@ trigger:
 
   - platform: time
     at: "17:00"
+
+  - platform: time
+    at: "20:00"
 
   - platform: time
     at: "21:00"
@@ -87,37 +107,30 @@ action:
       - conditions:
           - condition: or
             conditions:
-              - condition: time
-                after: "00:00:00"
-                before: "00:59:00"
-              - condition: time
-                after: "04:00:00"
-                before: "05:00:00"
-              - condition: time
-                after: "10:00:00"
-                before: "11:59:00"
-              - condition: time
-                after: "15:00:00"
-                before: "16:00:00"
-              - condition: time
-                after: "21:00:00"
-                before: "23:59:00"
-        sequence:
-          - service: input_text.set_value
-            data:
-              value: normal
-            target:
-              entity_id: input_text.hilo_challenge
-
-      - conditions:
-          - condition: or
-            conditions:
-              - condition: time
-                after: "06:00:00"
-                before: "10:00:00"
-              - condition: time
-                after: "17:00:00"
-                before: "21:00:00"
+              - condition: and
+                conditions:
+                  - condition: template
+                    value_template: "{{ hilo_or_hydro == 'Hydro' }}"
+                  - condition: or
+                    conditions:
+                      - condition: time
+                        after: "06:00:00"
+                        before: "09:00:00"
+                      - condition: time
+                        after: "17:00:00"
+                        before: "20:00:00"
+              - condition: and
+                conditions:
+                  - condition: template
+                    value_template: "{{ hilo_or_hydro == 'Hilo' }}"
+                  - condition: or
+                    conditions:
+                      - condition: time
+                        after: "06:00:00"
+                        before: "10:00:00"
+                      - condition: time
+                        after: "17:00:00"
+                        before: "21:00:00"
         sequence:
           - choose:
               - conditions:
@@ -143,6 +156,9 @@ action:
                       entity_id: input_text.hilo_challenge
 
       - conditions:
+          - condition: state
+            entity_id: !input challenge_in_progress
+            state: "True"
           - condition: or
             conditions:
               - condition: time
@@ -152,25 +168,15 @@ action:
                 after: "16:00:00"
                 before: "17:00:00"
         sequence:
-          - choose:
-              - conditions:
-                  - condition: state
-                    entity_id: !input challenge_in_progress
-                    state: "True"
-                sequence:
-                  - service: input_text.set_value
-                    data:
-                      value: preheat
-                    target:
-                      entity_id: input_text.hilo_challenge
+          - service: input_text.set_value
+            data:
+              value: preheat
+            target:
+              entity_id: input_text.hilo_challenge
 
-              - conditions:
-                  - condition: state
-                    entity_id: !input challenge_in_progress
-                    state: "False"
-                sequence:
-                  - service: input_text.set_value
-                    data:
-                      value: normal
-                    target:
-                      entity_id: input_text.hilo_challenge
+    default:
+      - service: input_text.set_value
+        data:
+          value: normal
+        target:
+          entity_id: input_text.hilo_challenge
