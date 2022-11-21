@@ -69,6 +69,10 @@ trigger:
   - platform: time
     at: "21:00"
 
+  - platform: state
+    entity_id:
+      - sensor.defi_hilo
+
 action:
   - choose:
       - conditions:

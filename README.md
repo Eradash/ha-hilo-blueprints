@@ -30,3 +30,4 @@ This list is not complete, if you have any ideas, please send a Pull request :)
 * Add a way to not have the Hilo integration (for those with only the Hydro-Québec way of challenges)
 * Add Blueprints for notifications with estimates and results
 * Complete the README with screenshots
+* Add a way to add an electric car charger control in the challenges
