@@ -147,7 +147,7 @@ action:
                   - choose:
                       - conditions: "{{ water_heater|length > 0 }}"
                         sequence:
-                          - service: switch.turn_on # I will add a way to select this to off, but for now I'm testing it this way
+                          - service: switch.turn_on
                             target:
                               entity_id: !input water_heater
 
