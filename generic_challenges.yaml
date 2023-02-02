@@ -6,7 +6,7 @@ blueprint:
   input:
     challenge_entity:
       name: Challenge selector entity
-      description: Entity that indicates the current phase of the challenge (preheat, reduction, etc...).
+      description: Input_text entity thas was manualy created
       selector:
         entity:
           domain: input_text

@@ -6,14 +6,14 @@ blueprint:
   input:
     challenge_entity:
       name: Challenge selector entity
-      description: Input text to change depending on time
+      description: Input_text entity thas was manualy created
       selector:
         entity:
           domain: input_text
 
     challenge_in_progress:
       name: Challenge in progress
-      description: Entity stating if a challenge is in progress
+      description: Sensor created in the configuration file
       selector:
         entity:
           domain: sensor

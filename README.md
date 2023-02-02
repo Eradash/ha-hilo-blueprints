@@ -14,9 +14,12 @@ Create an `input_text` input, this will store the current phase of challenges an
 Add a `sensor` in your configuration file with this pattern:
 
 ```yaml
-challenge_in_progress:
-  friendly_name: Challenge in progress sensor
-  value_template: "{{ is_state('sensor.defi_hilo', 'appreciation') or is_state('sensor.defi_hilo', 'pre_heat') or is_state('sensor.defi_hilo', 'reduction') }}"
+sensor:
+  - platform: template
+    sensors:
+      challenge_in_progress:
+        friendly_name: Challenge in progress sensor
+        value_template: "{{ is_state('sensor.defi_hilo', 'appreciation') or is_state('sensor.defi_hilo', 'pre_heat') or is_state('sensor.defi_hilo', 'reduction') }}"
 ```
 
 Install your blueprints with those links:
