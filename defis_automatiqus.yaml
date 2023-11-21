@@ -1,26 +1,26 @@
 blueprint:
-  name: Generic Hydro-Québec Challenges
-  description: Optimise temperatures based on the dynamic tarification with challenges
+  name: Défis Hilo automatiques
+  description: Optimise les températures basées sur les défis Hilo
   domain: automation
 
   input:
     challenge_entity:
-      name: Challenge selector entity
+      name: Entité de phase de défi
       description: Input_text entity thas was manualy created
       selector:
         entity:
           domain: input_text
 
     challenge_am:
-      name: Challenge AM
-      description: Will participate in the challenges in AM (reference included)
+      name: Défi AM
+      description: Va participer aux défis AM (incluant la référence)
       default: true
       selector:
         boolean:
 
     challenge_pm:
-      name: Challenge PM
-      description: Will participate in the challenges in PM (reference included)
+      name: Défi PM
+      description: Va participer aux défis PM (incluant la référence)
       default: true
       selector:
         boolean:
@@ -33,16 +33,16 @@ blueprint:
           multiple: true
 
     water_heater:
-      name: Water heater (optionnal)
-      description: Disables the water heater during challenges and appreciation references
+      name: Chauffe-eau (optionnel)
+      description: Désactive le chauffe-eau durant les défis et les phases d'appréciation de référence
       default: null
       selector:
         entity:
           domain: switch
 
     normal_temp:
-      name: Normal temperature
-      description: Normal temperature for when no challenges are in place
+      name: Température normale
+      description: Température pour les moments sans défis (ni référence, ni appréciation)
       default: 21
       selector:
         number:
@@ -52,8 +52,8 @@ blueprint:
           unit_of_measurement: °C
 
     reference_temp:
-      name: Reference temperature
-      description: Temperature to set during reference periods (higher than normal)
+      name: Température de référence
+      description: Température pour les phases de références (plus haute que la normale) (faible impact sur les récompenses)
       default: 22
       selector:
         number:
@@ -63,8 +63,8 @@ blueprint:
           unit_of_measurement: °C
 
     appreciation_reference_temp:
-      name: Appreciation reference temperature
-      description: Temperature to set during appreciation reference periods (lower than normal)
+      name: Température de la référence d'appréciation
+      description: Température pour les phases d'appréciation de référence (plus basse que normale) (impact modéré sur les récompenses)
       default: 20
       selector:
         number:
@@ -74,8 +74,8 @@ blueprint:
           unit_of_measurement: °C
 
     appreciation_temp:
-      name: Appreciation temperature
-      description: Temperature to set during appreciation phase (higher than normal)
+      name: Température de l'appréciation
+      description: Température pour les phases d'appréciation (plus haute que normale) (impact important sur les récompenses)
       default: 23
       selector:
         number:
@@ -85,8 +85,8 @@ blueprint:
           unit_of_measurement: °C
 
     preheat_temp:
-      name: Pre heat temperature
-      description: Temperature to increase during preheat periods (highest of all temperatures)
+      name: Température de pré-chauffage
+      description: Température durant la phase de pré-chauffage (aucun impact sur les récompenses)
       default: 23
       selector:
         number:
@@ -96,8 +96,8 @@ blueprint:
           unit_of_measurement: °C
 
     challenge_temp:
-      name: Challenge temperature
-      description: Temperature to drop to during challenges (lowest of all temperatures)
+      name: Température de défi
+      description: Température lors des défis (le plus bas possible)
       default: 17
       selector:
         number:
