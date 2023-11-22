@@ -22,6 +22,8 @@ sensor:
         value_template: "{{ is_state('sensor.defi_hilo', 'appreciation') or is_state('sensor.defi_hilo', 'pre_heat') or is_state('sensor.defi_hilo', 'reduction') }}"
 ```
 
+Redémarrez Home Assistant pour que le `sensor` devienne disponible.
+
 Installez les blueprints avec ces liens:
 
 * Challenge entity status: [![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fraw.githubusercontent.com%2FEradash%2Fha-hilo-blueprints%2Fmain%2Fchallenge_entity_updater.yaml)
