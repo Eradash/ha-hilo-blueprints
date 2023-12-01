@@ -3,7 +3,7 @@ Blueprints pour Home Assistant pour utiliser l'intégration Hilo facilement. Vou
 
 ## Configuration
 
-Vous allez avoir besoin de l'inrégration [Hilo](https://github.com/dvd-dev/hilo) pour que ces Blusprints fonctionnent
+Vous allez avoir besoin de l'intégration [Hilo](https://github.com/dvd-dev/hilo) pour que ces Blueprints fonctionnent
 
 **La période d'appréciation doit être de 3 heures**
 
