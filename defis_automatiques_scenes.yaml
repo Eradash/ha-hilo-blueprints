@@ -221,7 +221,7 @@ action:
       - conditions:
           - condition: state
             entity_id: !input challenge_entity
-            state: challenge
+            state: normal
           - condition: time
             after: '07:00:00'
             before: '11:55:00'
