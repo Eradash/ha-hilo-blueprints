@@ -310,6 +310,7 @@ action:
             state: normal
           - condition: time
             after: '19:55:00'
+            before: '02:00:00'
         sequence:
           - service: scene.turn_on
             target:
