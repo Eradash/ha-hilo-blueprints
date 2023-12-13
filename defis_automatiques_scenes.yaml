@@ -1,0 +1,317 @@
+blueprint:
+  name: Défis Hilo automatiques avec Scènes
+  description: Optimise les températures basées sur les défis Hilo
+  domain: automation
+  input:
+    challenge_entity:
+      name: Entité de phase de défi
+      description: Input_text entity thas was manualy created
+      selector:
+        entity:
+          domain:
+            - input_text
+          multiple: false
+    scenes_ref_appreciaton_am:
+      name: Scènes d'appréciation de référence am (1:00 à 4:00)
+      description: Température pour les phases d'appréciation de référence (plus basse que normale) (impact modéré sur les récompenses).
+      default:
+      selector:
+        entity:
+          domain:
+            - scene
+          #- automation
+          multiple: true
+    scenes_appreciaton_am:
+      name: Scènes d'appréciation am (1:00 à 4:00)
+      description: Température pour les phases d'appréciation (plus haute que normale) (impact important sur les récompenses).
+      default:
+      selector:
+        entity:
+          domain:
+            - scene
+          multiple: true
+    scenes_normal_night:
+      name: Scènes période normale nuit (4:00 à 6:00)
+      description: Température pour les moments sans défis (ni référence, ni appréciation)
+      default:
+      selector:
+        entity:
+          domain:
+            - scene
+          multiple: true
+    scenes_preheat_am:
+      name: Scènes pré-chauffage am (5:00 à 6:00)
+      description: Température durant la phase de pré-chauffage (aucun impact sur les récompenses).
+      default:
+      selector:
+        entity:
+          domain:
+            - scene
+          multiple: true
+    scenes_ref_challenge_am:
+      name: Scènes référence am (6:00 à 10:00)
+      description: Température pour les phases de références (plus haute que la normale) (faible impact sur les récompenses).
+      default:
+      selector:
+        entity:
+          domain:
+            - scene
+          multiple: true
+    scenes_challenge_am:
+      name: Scènes défi am (6:00 à 10:00)
+      description: Température lors des défis (le plus bas possible).
+      default:
+      selector:
+        entity:
+          domain:
+            - scene
+          multiple: true
+    scenes_normal_morning:
+      name: Scènes période normale matin (10:00 à 12:00)
+      description: Température pour les moments sans défis (ni référence, ni appréciation).
+      default:
+      selector:
+        entity:
+          domain:
+            - scene
+          multiple: true
+    scenes_ref_appreciation_pm:
+      name: Scènes d'appréciation de référence pm (12:00 à 15:00)
+      description: Température pour les phases d'appréciation de référence (plus basse que normale) (impact modéré sur les récompenses).
+      default:
+      selector:
+        entity:
+          domain:
+            - scene
+          multiple: true
+    scenes_appreciation_pm:
+      name: Scènes d'appréciation pm (12:00 à 15:00)
+      description: Température pour les phases d'appréciation (plus haute que normale) (impact important sur les récompenses).
+      default:
+      selector:
+        entity:
+          domain:
+            - scene
+          multiple: true
+    scenes_normal_pm:
+      name: Scènes période normale pm (15:00 à 17:00)
+      description: Température pour les moments sans défis (ni référence, ni appréciation).
+      default:
+      selector:
+        entity:
+          domain:
+            - scene
+          multiple: true
+    scenes_preheat_pm:
+      name: Scènes pré-chauffage pm (16:00 à 17:00)
+      description: Température durant la phase de pré-chauffage (aucun impact sur les récompenses).
+      default:
+      selector:
+        entity:
+          domain:
+            - scene
+          multiple: true
+    scenes_ref_challenge_pm:
+      name: Scènes référence pm (17:00 à 20:00)
+      description: Température pour les phases de références (plus haute que la normale) (faible impact sur les récompenses).
+      default:
+      selector:
+        entity:
+          domain:
+            - scene
+          multiple: true
+    scenes_challenge_pm:
+      name: Scènes défi pm (17:00 à 20:00)
+      description: Température lors des défis (le plus bas possible).
+      default:
+      selector:
+        entity:
+          domain:
+            - scene
+          multiple: true
+    scenes_normal_evening:
+      name: Scènes période normale soirée (20:00 à 1:00)
+      description: Température pour les moments sans défis (ni référence, ni appréciation).
+      default:
+      selector:
+        entity:
+          domain:
+            - scene
+          multiple: true
+  source_url: https://raw.githubusercontent.com/Eradash/ha-hilo-blueprints/main/defis_automatiques_scenes.yaml
+trigger:
+  - platform: state
+    entity_id: !input challenge_entity
+variables: {}
+action:
+  - choose:
+      # ref_appreciaton_am
+      - conditions:
+          - condition: state
+            entity_id: !input challenge_entity
+            state: ref_appreciation
+          - condition: time
+            before: '11:55:00'
+        sequence:
+          - service: scene.turn_on
+            target:
+              entity_id: !input scenes_ref_appreciaton_am
+
+      # appreciaton_am
+      - conditions:
+          - condition: state
+            entity_id: !input challenge_entity
+            state: appreciation
+          - condition: time
+            before: '11:55:00'
+        sequence:
+          - service: scene.turn_on
+            target:
+              entity_id: !input scenes_appreciaton_am
+
+      # normal_night
+      - conditions:
+          - condition: state
+            entity_id: !input challenge_entity
+            state: normal
+          - condition: time
+            before: '06:55:00'
+        sequence:
+          - service: scene.turn_on
+            target:
+              entity_id: !input scenes_normal_night
+
+      # preheat_am
+      - conditions:
+          - condition: state
+            entity_id: !input challenge_entity
+            state: preheat
+          - condition: time
+            before: '06:55:00'
+        sequence:
+          - service: scene.turn_on
+            target:
+              entity_id: !input scenes_preheat_am
+
+      # ref_challenge_am
+      - conditions:
+          - condition: state
+            entity_id: !input challenge_entity
+            state: ref_challenge
+          - condition: time
+            before: '11:55:00'
+        sequence:
+          - service: scene.turn_on
+            target:
+              entity_id: !input scenes_ref_challenge_am
+
+      # challenge_am
+      - conditions:
+          - condition: state
+            entity_id: !input challenge_entity
+            state: challenge
+          - condition: time
+            before: '11:55:00'
+        sequence:
+          - service: scene.turn_on
+            target:
+              entity_id: !input scenes_challenge_am
+
+      # normal_morning
+      - conditions:
+          - condition: state
+            entity_id: !input challenge_entity
+            state: normal
+          - condition: time
+            after: '07:00:00'
+            before: '11:55:00'
+        sequence:
+          - service: scene.turn_on
+            target:
+              entity_id: !input scenes_normal_morning
+
+      # ref_appreciation_pm
+      - conditions:
+          - condition: state
+            entity_id: !input challenge_entity
+            state: ref_appreciation
+          - condition: time
+            after: '11:55:00'
+        sequence:
+          - service: scene.turn_on
+            target:
+              entity_id: !input scenes_ref_appreciation_pm
+
+      # appreciation_pm
+      - conditions:
+          - condition: state
+            entity_id: !input challenge_entity
+            state: appreciation
+          - condition: time
+            after: '11:55:00'
+        sequence:
+          - service: scene.turn_on
+            target:
+              entity_id: !input scenes_appreciation_pm
+
+      # normal_pm
+      - conditions:
+          - condition: state
+            entity_id: !input challenge_entity
+            state: normal
+          - condition: time
+            after: '11:55:00'
+            before: '18:00:00'
+        sequence:
+          - service: scene.turn_on
+            target:
+              entity_id: !input scenes_normal_pm
+
+      # preheat_pm
+      - conditions:
+          - condition: state
+            entity_id: !input challenge_entity
+            state: preheat
+          - condition: time
+            after: '11:55:00'
+        sequence:
+          - service: scene.turn_on
+            target:
+              entity_id: !input scenes_preheat_pm
+
+      # ref_challenge_pm
+      - conditions:
+          - condition: state
+            entity_id: !input challenge_entity
+            state: ref_challenge
+          - condition: time
+            after: '11:55:00'
+        sequence:
+          - service: scene.turn_on
+            target:
+              entity_id: !input scenes_ref_challenge_pm
+
+      # challenge_pm
+      - conditions:
+          - condition: state
+            entity_id: !input challenge_entity
+            state: challenge
+          - condition: time
+            after: '11:55:00'
+        sequence:
+          - service: scene.turn_on
+            target:
+              entity_id: !input scenes_challenge_pm
+
+      # normal_evening
+      - conditions:
+          - condition: state
+            entity_id: !input challenge_entity
+            state: normal
+          - condition: time
+            after: '19:55:00'
+            before: '02:00:00'
+        sequence:
+          - service: scene.turn_on
+            target:
+              entity_id: !input scenes_normal_pm
