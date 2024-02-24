@@ -105,7 +105,7 @@ action:
                     conditions:
                       - condition: state
                         entity_id: !input default_challenge_entity
-                        state: "scheduled"
+                        state: scheduled
                       - condition: template
                         value_template: "{{ cooling_phase}}" 
                 sequence:
