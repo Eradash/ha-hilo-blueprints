@@ -43,6 +43,10 @@ trigger:
   - platform: time_pattern
     minutes: /1
 
+variables:
+  keep_pre_heat: !input keep_pre_heat
+  cooling_phase: !input cooling_phase
+
 action:
   - choose:
       - conditions:
@@ -90,17 +94,6 @@ action:
         sequence:
           - choose:
               - conditions:
-                  - condition: state
-                    entity_id: !input challenge_in_progress
-                    state: "False"
-                sequence:
-                  - service: input_text.set_value
-                    data:
-                      value: normal
-                    target:
-                      entity_id: !input challenge_entity
-
-              - conditions:
                   - condition: and
                     conditions:
                       - condition: state
@@ -114,7 +107,12 @@ action:
                       value: cooling
                     target:
                       entity_id: !input challenge_entity
-
+            default:
+              - service: input_text.set_value
+                data:
+                  value: normal
+                target:
+                  entity_id: !input challenge_entity
 
       - conditions:
           - condition: or
