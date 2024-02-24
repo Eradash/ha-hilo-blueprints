@@ -1,57 +1,47 @@
 blueprint:
-  name: Challenge entity updater
-  description: This will update a Challenge entity based on time and a HILO sensor
+  name: Hilo - Entité de référence automatique
+  description: Changement automatique de l'entité de référence pour les défis
   domain: automation
 
   input:
     challenge_entity:
-      name: Challenge selector entity
-      description: Input_text entity thas was manualy created
+      name: Entité de sélection
+      description: Input_text créé manuellement
       selector:
         entity:
           domain: input_text
 
     challenge_in_progress:
-      name: Challenge in progress
-      description: Sensor created in the configuration file
+      name: Défi en cour
+      description: Senseur créé dans le fichier de configuration
       selector:
         entity:
           domain: sensor
 
+    default_challenge_entity:
+      name: Entité de défi par défaut de l'intégration (pour la phase de refroidissement)
+      selector:
+      selector:
+        entity:
+          domain: sensor
+
+    keep_pre_heat:
+      name: Garder le pré-chauffage
+      description: Garder la température haute entre l'appréciation et la réduction
+      default: true
+      selector:
+        boolean:
+    
+    cooling_phase:
+      name: Phase de refroidissement
+      description: Inclure une phase de refroidissement avant l'appréciation
+      default: false
+      selector:
+        boolean:
+
 trigger:
-  - platform: time
-    at: "01:01"
-
-  - platform: time
-    at: "04:00"
-
-  - platform: time
-    at: "05:00"
-
-  - platform: time
-    at: "06:00"
-
-  - platform: time
-    at: "10:00"
-
-  - platform: time
-    at: "12:01"
-
-  - platform: time
-    at: "15:00"
-
-  - platform: time
-    at: "16:00"
-
-  - platform: time
-    at: "17:00"
-
-  - platform: time
-    at: "21:00"
-
-  - platform: state
-    entity_id:
-      - sensor.defi_hilo
+  - platform: time_pattern
+    minutes: /1
 
 action:
   - choose:
@@ -59,10 +49,10 @@ action:
           - condition: or
             conditions:
               - condition: time
-                after: "00:59:00"
+                after: "01:00:00"
                 before: "04:00:00"
               - condition: time
-                after: "11:59:00"
+                after: "12:00:00"
                 before: "15:00:00"
         sequence:
           - choose:
@@ -87,6 +77,44 @@ action:
                       value: appreciation
                     target:
                       entity_id: !input challenge_entity
+
+      - conditions:
+          - condition: or
+            conditions:
+              - condition: time
+                after: "00:30:00"
+                before: "01:00:00"
+              - condition: time
+                after: "11:30:00"
+                before: "12:00:00"
+        sequence:
+          - choose:
+              - conditions:
+                  - condition: state
+                    entity_id: !input challenge_in_progress
+                    state: "False"
+                sequence:
+                  - service: input_text.set_value
+                    data:
+                      value: normal
+                    target:
+                      entity_id: !input challenge_entity
+
+              - conditions:
+                  - condition: and
+                    conditions:
+                      - condition: state
+                        entity_id: !input default_challenge_entity
+                        state: "scheduled"
+                      - condition: template
+                        value_template: "{{ cooling_phase}}" 
+                sequence:
+                  - service: input_text.set_value
+                    data:
+                      value: cooling
+                    target:
+                      entity_id: !input challenge_entity
+
 
       - conditions:
           - condition: or
@@ -132,6 +160,29 @@ action:
               - condition: time
                 after: "16:00:00"
                 before: "17:00:00"
+        sequence:
+          - service: input_text.set_value
+            data:
+              value: preheat
+            target:
+              entity_id: !input challenge_entity
+      
+      - conditions:
+          - condition: state
+            entity_id: !input challenge_in_progress
+            state: "True"
+          - condition: and
+            conditions:
+              - condition: template
+                value_template: "{{ keep_pre_heat}}"
+              - condition: or
+                conditions:
+                - condition: time
+                  after: "04:00:00"
+                  before: "05:00:00"
+                - condition: time
+                  after: "15:00:00"
+                  before: "16:00:00"
         sequence:
           - service: input_text.set_value
             data:
