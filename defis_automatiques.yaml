@@ -33,12 +33,13 @@ blueprint:
           multiple: true
 
     water_heater:
-      name: Chauffe-eau (optionnel)
-      description: Désactive le chauffe-eau durant les défis et les phases d'appréciation de référence
+      name: Chauffe-eau ou autres switch (optionnel)
+      description: Désactive le chauffe-eau ou autres équipements durant les défis et les phases d'appréciation de référence
       default: null
       selector:
         entity:
           domain: switch
+          multiple: true
 
     normal_temp:
       name: Température normale
