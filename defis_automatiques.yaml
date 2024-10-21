@@ -40,6 +40,22 @@ blueprint:
         entity:
           domain: switch
 
+    other_devices:
+      name: Autres équipements (optionnel)
+      description: Désactive d'autres équipements durant les défis et/ou les phases d'appréciation de référence
+      default: null
+      selector:
+        entity:
+          domain: switch
+          multiple: true
+
+    bool_ref:
+      name: Défis seulement ou Défis et Appréciations 
+      description: Désactive les autres équipements durant les défis seulement (False) ou durant les défis ET les phases d'appréciation de référence (True)
+      default: False
+      selector:
+        boolean:
+
     normal_temp:
       name: Température normale
       description: Température pour les moments sans défis (ni référence, ni appréciation)
@@ -123,6 +139,7 @@ trigger:
 
 variables:
   water_heater: !input water_heater
+  other_devices: !input other_devices
   challenge_am: !input challenge_am
   challenge_pm: !input challenge_pm
 
@@ -161,6 +178,12 @@ action:
                           - service: switch.turn_on
                             target:
                               entity_id: !input water_heater
+                  - choose:
+                      - conditions: "{{ other_devices|length > 0 }}"
+                        sequence:
+                          - service: switch.turn_on
+                            target:
+                              entity_id: !input other_devices
 
               - conditions:
                   condition: state
@@ -178,6 +201,12 @@ action:
                           - service: switch.turn_on
                             target:
                               entity_id: !input water_heater
+                  - choose:
+                      - conditions: "{{ other_devices|length > 0 }}"
+                        sequence:
+                          - service: switch.turn_on
+                            target:
+                              entity_id: !input other_devices
 
               - conditions:
                   condition: state
@@ -195,6 +224,14 @@ action:
                           - service: switch.turn_off
                             target:
                               entity_id: !input water_heater
+                  - choose:
+                      - conditions: 
+                        - "{{ other_devices|length > 0 }}"
+                        - "{{ bool_ref == True }}"
+                        sequence:
+                          - service: switch.turn_off
+                            target:
+                              entity_id: !input other_devices
 
               - conditions:
                   condition: state
@@ -212,6 +249,12 @@ action:
                           - service: switch.turn_on
                             target:
                               entity_id: !input water_heater
+                  - choose:
+                      - conditions: "{{ other_devices|length > 0 }}"
+                        sequence:
+                          - service: switch.turn_on
+                            target:
+                              entity_id: !input other_devices
 
               - conditions:
                   condition: state
@@ -229,6 +272,12 @@ action:
                           - service: switch.turn_off
                             target:
                               entity_id: !input water_heater
+                  - choose:
+                      - conditions: "{{ other_devices|length > 0 }}"
+                        sequence:
+                          - service: switch.turn_off
+                            target:
+                              entity_id: !input other_devices
 
               - conditions:
                   condition: state
@@ -246,6 +295,12 @@ action:
                           - service: switch.turn_on
                             target:
                               entity_id: !input water_heater
+                  - choose:
+                      - conditions: "{{ other_devices|length > 0 }}"
+                        sequence:
+                          - service: switch.turn_on
+                            target:
+                              entity_id: !input other_devices
 
               - conditions:
                   condition: state
@@ -263,6 +318,13 @@ action:
                           - service: switch.turn_on
                             target:
                               entity_id: !input water_heater
+                  - choose:
+                      - conditions: "{{ other_devices|length > 0 }}"
+                        sequence:
+                          - service: switch.turn_on
+                            target:
+                              entity_id: !input other_devices
+                              
     default:
       - service: climate.set_temperature
         data:
@@ -275,3 +337,10 @@ action:
               - service: switch.turn_on
                 target:
                   entity_id: !input water_heater
+      - choose:
+          - conditions: "{{ other_devices|length > 0 }}"
+            sequence:
+              - service: switch.turn_on
+                target:
+                  entity_id: !input other_devices
+          
