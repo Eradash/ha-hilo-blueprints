@@ -2,6 +2,9 @@
 Blueprints pour Home Assistant pour utiliser l'intégration Hilo facilement. Vous allez être en mesure d'automatiser la température cible de vos thermostats pour augmenter vos récompenses Hilo
 
 ## Configuration
+### L'application Hilo
+Pour un fonctionnement optimal, désactivez la prise en charge des thermostats pendant les défis dans l'application Hilo. Vous participerez tout de même aux défis et recevrez les récompenses. Il est également recommandé de ne pas avoir de scènes programmées. Cela s'applique également à tous les autres thermostats non-Hilo, qui pourraient être gérés par ces automatisations.
+
 ### Intégration Hilo
 Vous allez avoir besoin de l'intégration [Hilo](https://github.com/dvd-dev/hilo) pour que ces Blueprints fonctionnent
 
