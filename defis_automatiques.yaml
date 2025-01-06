@@ -50,14 +50,14 @@ blueprint:
           multiple: true
 
     bool_ref_water_heater:
-      name: Défis seulement ou Refroidissment et Défis 
+      name: Chauffe eau - Défis seulement ou Refroidissment et Défis 
       description: Désactive le chauffe eaux durant les défis seulement (False) ou désactiver durant la phase de refroidissement, puis réactivation durant la phase d'appréciation avec de désactiver pour les défis (True)
       default: False
       selector:
         boolean:
         
     bool_ref_other:
-      name: Défis seulement ou Refroidissment/Appréciations/Défis 
+      name: Autres Équipements - Défis seulement ou Refroidissment et Défis 
       description: Désactive les autres équipements durant les défis seulement (False) ou désactiver durant la phase de refroidissement, puis réactivation durant la phase d'appréciation avec de désactiver pour les défis (True)
       default: False
       selector:
