@@ -14,12 +14,10 @@ Créez une entrée `input_text`, ceci va stocker la phase courante des défis.
 Ajoutez un `sensor` dans le fichier de configuration avec ce code:
 
 ```yaml
-sensor:
-  - platform: template
-    sensors:
-      challenge_in_progress:
-        friendly_name: Senseur de défi en cours
-        value_template: "{{ is_state('sensor.defi_hilo', 'appreciation') or is_state('sensor.defi_hilo', 'pre_heat') or is_state('sensor.defi_hilo', 'reduction') }}"
+template:
+  - sensor:
+      - name: Senseur de défi en cours
+        state: "{{ is_state('sensor.defi_hilo', ['appreciation','pre_heat','reduction']) }}"
 ```
 
 Redémarrez Home Assistant pour que le `sensor` devienne disponible.
