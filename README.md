@@ -2,16 +2,19 @@
 Blueprints pour Home Assistant pour utiliser l'intégration Hilo facilement. Vous allez être en mesure d'automatiser la température cible de vos thermostats pour augmenter vos récompenses Hilo
 
 ## Configuration
-
+### Intégration Hilo
 Vous allez avoir besoin de l'intégration [Hilo](https://github.com/dvd-dev/hilo) pour que ces Blueprints fonctionnent
 
-**La période d'appréciation doit être de 3 heures**
+**La période d'appréciation doit être de 3 heures. Vous pouvez le mettre dans la configuration de l'intégration Hilo**
 
+###Création d'un 'input_text'
 Créez une entrée `input_text`, ceci va stocker la phase courante des défis.
 
-* Juste ici pour la configuration: [![Open your Home Assistant instance and show your helper entities.](https://my.home-assistant.io/badges/helpers.svg)](https://my.home-assistant.io/redirect/helpers/)
+Allez dans les "helpers" pour la configuration: [![Open your Home Assistant instance and show your helper entities.](https://my.home-assistant.io/badges/helpers.svg)](https://my.home-assistant.io/redirect/helpers/)
+Choisissez "Text", donnez-lui un nom unique comme "text defi en cours" sans autre option et appuyé sur "create".
 
-Ajoutez un `sensor` dans le fichier de configuration avec ce code:
+### Creéation d'un 'Sensor'
+Ajoutez un `sensor` dans le fichier de configuration (configuration.yaml) accessible via le addon "File Editor" avec ce code:
 
 ```yaml
 template:
@@ -20,8 +23,9 @@ template:
         state: "{{ is_state('sensor.defi_hilo', ['appreciation','pre_heat','reduction','pre_cold']) }}"
 ```
 
-Redémarrez Home Assistant pour que le `sensor` devienne disponible.
+**Redémarrez Home Assistant pour que le `sensor` devienne disponible.**
 
+### Installation des "Blueprints"
 Installez les blueprints avec ces liens:
 
 * Entité de référence: [![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fraw.githubusercontent.com%2FEradash%2Fha-hilo-blueprints%2Fmain%2Fdefis_entite_reference.yaml)
