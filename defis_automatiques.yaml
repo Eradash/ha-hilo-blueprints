@@ -49,9 +49,16 @@ blueprint:
           domain: switch
           multiple: true
 
-    bool_ref:
-      name: Défis seulement ou Défis et Appréciations 
-      description: Désactive les autres équipements durant les défis seulement (False) ou durant les défis ET les phases d'appréciation de référence (True)
+    bool_ref_water_heater:
+      name: Défis seulement ou Refroidissment et Défis 
+      description: Désactive le chauffe eaux durant les défis seulement (False) ou désactiver durant la phase de refroidissement, puis réactivation durant la phase d'appréciation avec de désactiver pour les défis (True)
+      default: False
+      selector:
+        boolean:
+        
+    bool_ref_other:
+      name: Défis seulement ou Refroidissment/Appréciations/Défis 
+      description: Désactive les autres équipements durant les défis seulement (False) ou désactiver durant la phase de refroidissement, puis réactivation durant la phase d'appréciation avec de désactiver pour les défis (True)
       default: False
       selector:
         boolean:
@@ -219,7 +226,9 @@ action:
                     target:
                       entity_id: !input thermostats
                   - choose:
-                      - conditions: "{{ water_heater|length > 0 }}"
+                      - conditions: 
+                        - "{{ water_heater|length > 0 }}"
+                        - "{{ bool_ref_water_heater == True }}"
                         sequence:
                           - service: switch.turn_off
                             target:
@@ -227,7 +236,7 @@ action:
                   - choose:
                       - conditions: 
                         - "{{ other_devices|length > 0 }}"
-                        - "{{ bool_ref == True }}"
+                        - "{{ bool_ref_other == True }}"
                         sequence:
                           - service: switch.turn_off
                             target:
