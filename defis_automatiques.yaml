@@ -211,7 +211,7 @@ action:
               - conditions:
                   condition: state
                   entity_id: !input challenge_entity
-                  state: cooling
+                  state: pre_cold
                 sequence:
                   - service: climate.set_temperature
                     data:
