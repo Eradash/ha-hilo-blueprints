@@ -104,7 +104,7 @@ action:
                 sequence:
                   - service: input_text.set_value
                     data:
-                      value: cooling
+                      value: pre_cold
                     target:
                       entity_id: !input challenge_entity
             default:
