@@ -10,7 +10,7 @@ Vous allez avoir besoin de l'intégration [Hilo](https://github.com/dvd-dev/hilo
 
 **La période d'appréciation doit être de 3 heures. Vous pouvez le mettre dans la configuration de l'intégration Hilo**
 
-###Création d'un 'input_text'
+### Création d'un 'input_text'
 Créez une entrée `input_text`, ceci va stocker la phase courante des défis.
 
 Allez dans les "helpers" pour la configuration: [![Open your Home Assistant instance and show your helper entities.](https://my.home-assistant.io/badges/helpers.svg)](https://my.home-assistant.io/redirect/helpers/)
