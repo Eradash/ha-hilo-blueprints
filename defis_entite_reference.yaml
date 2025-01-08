@@ -21,7 +21,7 @@ blueprint:
     do_pre_heat:
       name: Activer le pré-chauffage
       description: Pré-chauffer avant la réduction (équivalent au pré-chauffage de l'appli Hilo)
-     default: true
+      default: true
       selector:
         boolean:
 
@@ -30,7 +30,7 @@ trigger:
     minutes: /1
 
 variables:
-  keep_pre_heat: !input keep_pre_heat
+  do_pre_heat: !input do_pre_heat
 
 action:
   - choose:
@@ -148,7 +148,7 @@ action:
                     state: "pre_heat"
                   - condition: state  # Add this new condition to check if do_pre_heat is True
                     entity_id: !input do_pre_heat
-                    state: "True"  # Ensure that do_pre_heat is True
+                    state: True  # Ensure that do_pre_heat is True
                 sequence:
                   - service: input_text.set_value
                     data:
@@ -158,7 +158,7 @@ action:
               - conditions:
                   - condition: state  # Add this new condition to check if do_pre_heat is True
                     entity_id: !input do_pre_heat
-                    state: "False"  # Ensure that do_pre_heat is True
+                    state: False  # Ensure that do_pre_heat is True
                 sequence:
                   - service: input_text.set_value
                     data:
