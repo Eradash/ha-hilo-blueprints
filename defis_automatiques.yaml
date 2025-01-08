@@ -245,7 +245,7 @@ action:
               - conditions:
                   condition: state
                   entity_id: !input challenge_entity
-                  state: ref_challenge
+                  state: ref_reduction
                 sequence:
                   - service: climate.set_temperature
                     data:
@@ -268,7 +268,7 @@ action:
               - conditions:
                   condition: state
                   entity_id: !input challenge_entity
-                  state: challenge
+                  state: reduction
                 sequence:
                   - service: climate.set_temperature
                     data:
