@@ -145,7 +145,8 @@ action:
                   - condition: state
                     entity_id: !input default_challenge_entity
                     state: "pre_heat"
-                  - condition: "{{ do_pre_heat | bool }}"
+                  - condition: template
+                    value_template: "{{ do_pre_heat | bool }}"
                 sequence:
                   - service: input_text.set_value
                     data:
@@ -156,7 +157,8 @@ action:
                   - condition: state
                     entity_id: !input default_challenge_entity
                     state: "pre_heat"
-                  - condition: "{{ do_pre_heat | bool }}"
+                  - condition: template
+                    value_template: "{{ do_pre_heat | bool }}"
                 sequence:
                   - service: input_text.set_value
                     data:
