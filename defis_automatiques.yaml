@@ -147,6 +147,8 @@ trigger:
 variables:
   water_heater: !input water_heater
   other_devices: !input other_devices
+  bool_ref_water_heater: !input bool_ref_water_heater
+  bool_ref_other: !input bool_ref_other
   challenge_am: !input challenge_am
   challenge_pm: !input challenge_pm
 
@@ -228,7 +230,7 @@ action:
                   - choose:
                       - conditions: 
                         - "{{ water_heater|length > 0 }}"
-                        - "{{ bool_ref_water_heater | bool }}"
+                        - "{{ bool_ref_water_heater == true }}"
                         sequence:
                           - service: switch.turn_off
                             target:
@@ -236,7 +238,7 @@ action:
                   - choose:
                       - conditions: 
                         - "{{ other_devices|length > 0 }}"
-                        - "{{ bool_ref_other | bool }}"
+                        - "{{ bool_ref_other == true }}"
                         sequence:
                           - service: switch.turn_off
                             target:
