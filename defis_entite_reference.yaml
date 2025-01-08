@@ -154,20 +154,7 @@ action:
                       value: "pre_heat"
                     target:
                       entity_id: !input challenge_entity   
-              - conditions:
-                  #- condition: state  # Add this new condition to check if do_pre_heat is True
-                    #entity_id: input.do_pre_heat
-                    #state: "false"  # Ensure that do_pre_heat is True
-                - conditions:
-                  - condition: template
-                    value_template: "{{ states(input.default_challenge_entity) != 'pre_heat' }}"
-                sequence:
-                  - service: input_text.set_value
-                    data:
-                      value: normal
-                    target:
-                      entity_id: !input challenge_entity
-                     
+
     default:
       - service: input_text.set_value
         data:
