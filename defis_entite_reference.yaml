@@ -11,13 +11,6 @@ blueprint:
         entity:
           domain: input_text
 
-    challenge_in_progress:
-      name: Défi en cour
-      description: Senseur créé dans le fichier de configuration
-      selector:
-        entity:
-          domain: sensor
-
     default_challenge_entity:
       name: Entité de défi par défaut de l'intégration (pour la phase de refroidissement)
       selector:
@@ -25,17 +18,10 @@ blueprint:
         entity:
           domain: sensor
 
-    keep_pre_heat:
-      name: Garder le pré-chauffage
-      description: Garder la température haute entre l'appréciation et la réduction
-      default: true
-      selector:
-        boolean:
-    
-    cooling_phase:
-      name: Phase de refroidissement
-      description: Inclure une phase de refroidissement avant l'appréciation
-      default: false
+    do_pre_heat:
+      name: Activer le pré-chauffage
+      description: Pré-chauffer avant la réduction (équivalent au pré-chauffage de l'appli Hilo)
+     default: true
       selector:
         boolean:
 
@@ -45,10 +31,10 @@ trigger:
 
 variables:
   keep_pre_heat: !input keep_pre_heat
-  cooling_phase: !input cooling_phase
 
 action:
   - choose:
+      # Verification de la periode d'appreciation (doit etre configurer pour un max de 3h dans l'intégration de Hilo)
       - conditions:
           - condition: or
             conditions:
@@ -61,59 +47,58 @@ action:
         sequence:
           - choose:
               - conditions:
-                  - condition: state
-                    entity_id: !input challenge_in_progress
-                    state: "False"
+                  - condition: template
+                    value_template: "{{ states('!input default_challenge_entity') != 'appreciation' }}"
                 sequence:
                   - service: input_text.set_value
                     data:
                       value: ref_appreciation
                     target:
                       entity_id: !input challenge_entity
-
               - conditions:
                   - condition: state
-                    entity_id: !input challenge_in_progress
-                    state: "True"
+                    entity_id: !input default_challenge_entity
+                    state: "appreciation"
                 sequence:
                   - service: input_text.set_value
                     data:
                       value: appreciation
                     target:
                       entity_id: !input challenge_entity
-
+                      
+      # Verification pour la periode de refroidissement avant l'appreciation (doit etre configuré pour un max de 1h dans l'intégration de Hilo)
       - conditions:
           - condition: or
             conditions:
               - condition: time
-                after: "00:30:00"
+                after: "00:00:00"
                 before: "01:00:00"
               - condition: time
-                after: "11:30:00"
+                after: "11:00:00"
                 before: "12:00:00"
         sequence:
           - choose:
               - conditions:
-                  - condition: and
-                    conditions:
-                      - condition: state
-                        entity_id: !input default_challenge_entity
-                        state: scheduled
-                      - condition: template
-                        value_template: "{{ cooling_phase}}" 
+                  - condition: state
+                    entity_id: !input default_challenge_entity
+                    state: "pre_cold"
                 sequence:
                   - service: input_text.set_value
                     data:
                       value: pre_cold
                     target:
                       entity_id: !input challenge_entity
-            default:
-              - service: input_text.set_value
-                data:
-                  value: normal
-                target:
-                  entity_id: !input challenge_entity
+              - conditions:
+                  - condition: template
+                    value_template: "{{ states('!input default_challenge_entity') != 'pre_cold' }}"
+                sequence:
+                  - service: input_text.set_value
+                    data:
+                      value: normal
+                    target:
+                      entity_id: !input challenge_entity
 
+      # Verification de defis en cours (reduction)
       - conditions:
           - condition: or
             conditions:
@@ -127,29 +112,26 @@ action:
           - choose:
               - conditions:
                   - condition: state
-                    entity_id: !input challenge_in_progress
-                    state: "False"
-                sequence:
-                  - service: input_text.set_value
-                    data:
-                      value: ref_challenge
-                    target:
-                      entity_id: !input challenge_entity
-              - conditions:
-                  - condition: state
-                    entity_id: !input challenge_in_progress
-                    state: "True"
+                    entity_id: !input default_challenge_entity
+                    state: "reduction"
                 sequence:
                   - service: input_text.set_value
                     data:
                       value: challenge
                     target:
                       entity_id: !input challenge_entity
-
+              - conditions:
+                  - condition: template
+                    value_template: "{{ states('!input default_challenge_entity') != 'reduction' }}"
+                sequence:
+                  - service: input_text.set_value
+                    data:
+                      value: ref_challenge
+                    target:
+                      entity_id: !input challenge_entity
+                      
+      # Verification de Pre_heat avant la reduction SI do_pre_heat est activé
       - conditions:
-          - condition: state
-            entity_id: !input challenge_in_progress
-            state: "True"
           - condition: or
             conditions:
               - condition: time
@@ -159,35 +141,31 @@ action:
                 after: "16:00:00"
                 before: "17:00:00"
         sequence:
-          - service: input_text.set_value
-            data:
-              value: preheat
-            target:
-              entity_id: !input challenge_entity
+          - choose:
+              - conditions:
+                  - condition: state
+                    entity_id: !input default_challenge_entity
+                    state: "pre_heat"
+                  - condition: state  # Add this new condition to check if do_pre_heat is True
+                    entity_id: !input do_pre_heat
+                    state: "True"  # Ensure that do_pre_heat is True
+                sequence:
+                  - service: input_text.set_value
+                    data:
+                      value: "pre_heat"
+                    target:
+                      entity_id: !input challenge_entity   
+              - conditions:
+                  - condition: state  # Add this new condition to check if do_pre_heat is True
+                    entity_id: !input do_pre_heat
+                    state: "False"  # Ensure that do_pre_heat is True
+                sequence:
+                  - service: input_text.set_value
+                    data:
+                      value: normal
+                    target:
+                      entity_id: !input challenge_entity   
       
-      - conditions:
-          - condition: state
-            entity_id: !input challenge_in_progress
-            state: "True"
-          - condition: and
-            conditions:
-              - condition: template
-                value_template: "{{ keep_pre_heat}}"
-              - condition: or
-                conditions:
-                - condition: time
-                  after: "04:00:00"
-                  before: "05:00:00"
-                - condition: time
-                  after: "15:00:00"
-                  before: "16:00:00"
-        sequence:
-          - service: input_text.set_value
-            data:
-              value: preheat
-            target:
-              entity_id: !input challenge_entity
-
     default:
       - service: input_text.set_value
         data:
