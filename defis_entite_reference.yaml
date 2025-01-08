@@ -145,13 +145,25 @@ action:
                   - condition: state
                     entity_id: !input default_challenge_entity
                     state: "pre_heat"
-                  - condition: "{{ bool_ref_other | bool }}"
+                  - condition: "{{ do_pre_heat | bool }}"
                 sequence:
                   - service: input_text.set_value
                     data:
                       value: pre_heat
                     target:
-                      entity_id: !input challenge_entity   
+                      entity_id: !input challenge_entity
+              - conditions:
+                  - condition: state
+                    entity_id: !input default_challenge_entity
+                    state: "pre_heat"
+                  - condition: "{{ do_pre_heat | bool }}"
+                sequence:
+                  - service: input_text.set_value
+                    data:
+                      value: normal
+                    target:
+                      entity_id: !input challenge_entity
+            
 
     default:
       - service: input_text.set_value
