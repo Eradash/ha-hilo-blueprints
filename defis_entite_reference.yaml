@@ -116,7 +116,7 @@ action:
                 sequence:
                   - service: input_text.set_value
                     data:
-                      value: challenge
+                      value: reduction
                     target:
                       entity_id: !input challenge_entity
               - conditions:
@@ -125,7 +125,7 @@ action:
                 sequence:
                   - service: input_text.set_value
                     data:
-                      value: ref_challenge
+                      value: ref_reduction
                     target:
                       entity_id: !input challenge_entity
                       
@@ -151,7 +151,7 @@ action:
                 sequence:
                   - service: input_text.set_value
                     data:
-                      value: "pre_heat"
+                      value: pre_heat
                     target:
                       entity_id: !input challenge_entity   
 
