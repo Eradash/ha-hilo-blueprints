@@ -14,7 +14,6 @@ blueprint:
     default_challenge_entity:
       name: Entité de défi par défaut de l'intégration (pour la phase de refroidissement)
       selector:
-      selector:
         entity:
           domain: sensor
 
@@ -29,8 +28,8 @@ trigger:
   - platform: time_pattern
     minutes: /1
 
-variables:
-  do_pre_heat: !input do_pre_heat
+#variables:
+#  do_pre_heat: !input do_pre_heat
 
 action:
   - choose:
@@ -48,7 +47,7 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ states('!input default_challenge_entity') != 'appreciation' }}"
+                    value_template: "{{ states(input.default_challenge_entity) != 'appreciation' }}"
                 sequence:
                   - service: input_text.set_value
                     data:
@@ -90,7 +89,7 @@ action:
                       entity_id: !input challenge_entity
               - conditions:
                   - condition: template
-                    value_template: "{{ states('!input default_challenge_entity') != 'pre_cold' }}"
+                    value_template: "{{ states(input.default_challenge_entity) != 'pre_cold' }}"
                 sequence:
                   - service: input_text.set_value
                     data:
@@ -122,7 +121,7 @@ action:
                       entity_id: !input challenge_entity
               - conditions:
                   - condition: template
-                    value_template: "{{ states('!input default_challenge_entity') != 'reduction' }}"
+                    value_template: "{{ states(input.default_challenge_entity) != 'reduction' }}"
                 sequence:
                   - service: input_text.set_value
                     data:
@@ -147,8 +146,8 @@ action:
                     entity_id: !input default_challenge_entity
                     state: "pre_heat"
                   - condition: state  # Add this new condition to check if do_pre_heat is True
-                    entity_id: !input do_pre_heat
-                    state: True  # Ensure that do_pre_heat is True
+                    entity_id: input.do_pre_heat
+                    state: "true"  # Ensure that do_pre_heat is True
                 sequence:
                   - service: input_text.set_value
                     data:
@@ -157,8 +156,8 @@ action:
                       entity_id: !input challenge_entity   
               - conditions:
                   - condition: state  # Add this new condition to check if do_pre_heat is True
-                    entity_id: !input do_pre_heat
-                    state: False  # Ensure that do_pre_heat is True
+                    entity_id: input.do_pre_heat
+                    state: "false"  # Ensure that do_pre_heat is True
                 sequence:
                   - service: input_text.set_value
                     data:
