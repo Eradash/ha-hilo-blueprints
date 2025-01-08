@@ -29,7 +29,7 @@ Installez les blueprints avec ces liens:
 
 Si vous voulez améliorer, gênez-vous pas! Présentement, j'aimerais ajouter une manière de mieux contrôller une thermopompe, pour réduire les coûts liés au pré-chauffage. Cela doit être configurable avec une valeur limite de température extérieure.
 
-**Contributeurs:
+**Contributeurs:**
 
 * @arim215
 * @jrobichaud
