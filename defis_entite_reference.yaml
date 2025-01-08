@@ -55,15 +55,12 @@ action:
                       value: appreciation
                     target:
                       entity_id: !input challenge_entity
-              - conditions:
-                  - condition: template
-                    value_template: "{{ states(input.default_challenge_entity) != 'appreciation' }}"
-                sequence:
-                  - service: input_text.set_value
-                    data:
-                      value: ref_appreciation
-                    target:
-                      entity_id: !input challenge_entity
+            default:
+              - service: input_text.set_value
+                data:
+                  value: ref_appreciation
+                target:
+                  entity_id: !input challenge_entity
                       
       # Verification pour la periode de refroidissement avant l'appreciation (doit etre configuré pour un max de 1h dans l'intégration de Hilo)
       - conditions:
@@ -87,15 +84,12 @@ action:
                       value: pre_cold
                     target:
                       entity_id: !input challenge_entity
-              - conditions:
-                  - condition: template
-                    value_template: "{{ states(input.default_challenge_entity) != 'pre_cold' }}"
-                sequence:
-                  - service: input_text.set_value
-                    data:
-                      value: normal
-                    target:
-                      entity_id: !input challenge_entity
+            default:
+              - service: input_text.set_value
+                data:
+                  value: normal
+                target:
+                  entity_id: !input challenge_entity
 
       # Verification de defis en cours (reduction)
       - conditions:
@@ -119,15 +113,12 @@ action:
                       value: reduction
                     target:
                       entity_id: !input challenge_entity
-              - conditions:
-                  - condition: template
-                    value_template: "{{ states(input.default_challenge_entity) != 'reduction' }}"
-                sequence:
-                  - service: input_text.set_value
-                    data:
-                      value: ref_reduction
-                    target:
-                      entity_id: !input challenge_entity
+            default:
+              - service: input_text.set_value
+                data:
+                  value: ref_reduction
+                target:
+                  entity_id: !input challenge_entity
                       
       # Verification de Pre_heat avant la reduction SI do_pre_heat est activé
       - conditions:
@@ -153,18 +144,12 @@ action:
                       value: pre_heat
                     target:
                       entity_id: !input challenge_entity
-              - conditions:
-                  - condition: state
-                    entity_id: !input default_challenge_entity
-                    state: "pre_heat"
-                  - condition: template
-                    value_template: "{{ do_pre_heat | bool }}"
-                sequence:
-                  - service: input_text.set_value
-                    data:
-                      value: normal
-                    target:
-                      entity_id: !input challenge_entity
+            default:
+              - service: input_text.set_value
+                data:
+                  value: normal
+                target:
+                  entity_id: !input challenge_entity
             
 
     default:
