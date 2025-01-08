@@ -230,7 +230,7 @@ action:
                   - choose:
                       - conditions: 
                         - "{{ water_heater|length > 0 }}"
-                        - "{{ bool_ref_water_heater == true }}"
+                        - "{{ bool_ref_water_heater | bool }}"
                         sequence:
                           - service: switch.turn_off
                             target:
@@ -238,7 +238,7 @@ action:
                   - choose:
                       - conditions: 
                         - "{{ other_devices|length > 0 }}"
-                        - "{{ bool_ref_other == true }}"
+                        - "{{ bool_ref_other | bool }}"
                         sequence:
                           - service: switch.turn_off
                             target:
