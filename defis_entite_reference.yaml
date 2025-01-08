@@ -46,15 +46,6 @@ action:
         sequence:
           - choose:
               - conditions:
-                  - condition: template
-                    value_template: "{{ states(input.default_challenge_entity) != 'appreciation' }}"
-                sequence:
-                  - service: input_text.set_value
-                    data:
-                      value: ref_appreciation
-                    target:
-                      entity_id: !input challenge_entity
-              - conditions:
                   - condition: state
                     entity_id: !input default_challenge_entity
                     state: "appreciation"
@@ -62,6 +53,15 @@ action:
                   - service: input_text.set_value
                     data:
                       value: appreciation
+                    target:
+                      entity_id: !input challenge_entity
+              - conditions:
+                  - condition: template
+                    value_template: "{{ states(input.default_challenge_entity) != 'appreciation' }}"
+                sequence:
+                  - service: input_text.set_value
+                    data:
+                      value: ref_appreciation
                     target:
                       entity_id: !input challenge_entity
                       
