@@ -29,10 +29,17 @@ Installez les blueprints avec ces liens:
 
 Si vous voulez améliorer, gênez-vous pas! Présentement, j'aimerais ajouter une manière de mieux contrôller une thermopompe, pour réduire les coûts liés au pré-chauffage. Cela doit être configurable avec une valeur limite de température extérieure.
 
+**Contributeurs:
+
+* @arim215
+* @jrobichaud
+* @jpbaril
+
 ## À faire:
 
-La liste n'est pas complète, si vous avez des idées, envoyez une Pull Request ;) 
+La liste n'est pas complète, si vous avez des idées, envoyez une Pull Request ;)
 
+* Combiner les 2 blueprints en 1 seul et simplifier le code
 * Ajouter des Blueprints pour des notifications avec des estimés et des résultats
 * Compléter le README avec les détails sur comment les automatisations sont configurées
 * Ajouter une manière de contrôler la charge d'un véhicule électrique durant les défis
