@@ -103,27 +103,28 @@ action:
                 before: "21:00:00"
         sequence:
           - choose:
-              - condition: or
-                conditions:
-                  - condition: state
-                    entity_id: !input default_challenge_entity
-                    state: "reduction"
-                  - condition: state
-                    entity_id: !input default_challenge_entity
-                    state: "on"
+              - conditions:
+                  - condition: or
+                    conditions:
+                      - condition: state
+                        entity_id: !input default_challenge_entity
+                        state: "reduction"
+                      - condition: state
+                        entity_id: !input default_challenge_entity
+                        state: "on"
                 sequence:
                   - service: input_text.set_value
                     data:
-                      value: reduction
+                      value: "reduction"
                     target:
                       entity_id: !input challenge_entity
             default:
               - service: input_text.set_value
                 data:
-                  value: ref_reduction
+                  value: "ref_reduction"
                 target:
                   entity_id: !input challenge_entity
-                      
+
       # Verification de Pre_heat avant la reduction SI do_pre_heat est activé
       - conditions:
           - condition: or
