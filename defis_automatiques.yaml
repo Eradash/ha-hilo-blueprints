@@ -49,10 +49,17 @@ blueprint:
           domain: switch
           multiple: true
 
-    bool_ref:
-      name: Défis seulement ou Défis et Appréciations 
-      description: Désactive les autres équipements durant les défis seulement (False) ou durant les défis ET les phases d'appréciation de référence (True)
-      default: False
+    bool_ref_water_heater:
+      name: Chauffe eau - Défis seulement ou Refroidissment et Défis 
+      description: Désactive le chauffe eaux durant les défis seulement (False) ou désactiver durant la phase de refroidissement, puis réactivation durant la phase d'appréciation avec de désactiver pour les défis (True)
+      default: false
+      selector:
+        boolean:
+        
+    bool_ref_other:
+      name: Autres Équipements - Défis seulement ou Refroidissment et Défis 
+      description: Désactive les autres équipements durant les défis seulement (False) ou désactiver durant la phase de refroidissement, puis réactivation durant la phase d'appréciation avec de désactiver pour les défis (True)
+      default: false
       selector:
         boolean:
 
@@ -140,6 +147,8 @@ trigger:
 variables:
   water_heater: !input water_heater
   other_devices: !input other_devices
+  bool_ref_water_heater: !input bool_ref_water_heater
+  bool_ref_other: !input bool_ref_other
   challenge_am: !input challenge_am
   challenge_pm: !input challenge_pm
 
@@ -211,7 +220,7 @@ action:
               - conditions:
                   condition: state
                   entity_id: !input challenge_entity
-                  state: cooling
+                  state: pre_cold
                 sequence:
                   - service: climate.set_temperature
                     data:
@@ -219,7 +228,9 @@ action:
                     target:
                       entity_id: !input thermostats
                   - choose:
-                      - conditions: "{{ water_heater|length > 0 }}"
+                      - conditions: 
+                        - "{{ water_heater|length > 0 }}"
+                        - "{{ bool_ref_water_heater | bool }}"
                         sequence:
                           - service: switch.turn_off
                             target:
@@ -227,7 +238,7 @@ action:
                   - choose:
                       - conditions: 
                         - "{{ other_devices|length > 0 }}"
-                        - "{{ bool_ref == True }}"
+                        - "{{ bool_ref_other | bool }}"
                         sequence:
                           - service: switch.turn_off
                             target:
@@ -236,7 +247,7 @@ action:
               - conditions:
                   condition: state
                   entity_id: !input challenge_entity
-                  state: ref_challenge
+                  state: ref_reduction
                 sequence:
                   - service: climate.set_temperature
                     data:
@@ -259,7 +270,7 @@ action:
               - conditions:
                   condition: state
                   entity_id: !input challenge_entity
-                  state: challenge
+                  state: reduction
                 sequence:
                   - service: climate.set_temperature
                     data:
@@ -282,7 +293,7 @@ action:
               - conditions:
                   condition: state
                   entity_id: !input challenge_entity
-                  state: preheat
+                  state: pre_heat
                 sequence:
                   - service: climate.set_temperature
                     data:
