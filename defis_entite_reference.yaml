@@ -91,7 +91,7 @@ action:
                 target:
                   entity_id: !input challenge_entity
 
-      # Verification de defis en cours (reduction)
+      # Verification de defis en cours (reduction ou on)
       - conditions:
           - condition: or
             conditions:
