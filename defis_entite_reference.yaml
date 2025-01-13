@@ -103,10 +103,14 @@ action:
                 before: "21:00:00"
         sequence:
           - choose:
-              - conditions:
+              - condition: or
+                conditions:
                   - condition: state
                     entity_id: !input default_challenge_entity
                     state: "reduction"
+                  - condition: state
+                    entity_id: !input default_challenge_entity
+                    state: "on"
                 sequence:
                   - service: input_text.set_value
                     data:
