@@ -52,13 +52,13 @@ action:
                 sequence:
                   - service: input_text.set_value
                     data:
-                      value: appreciation
+                      value: "appreciation"
                     target:
                       entity_id: !input challenge_entity
             default:
               - service: input_text.set_value
                 data:
-                  value: ref_appreciation
+                  value: "ref_appreciation"
                 target:
                   entity_id: !input challenge_entity
                       
@@ -81,13 +81,13 @@ action:
                 sequence:
                   - service: input_text.set_value
                     data:
-                      value: pre_cold
+                      value: "pre_cold"
                     target:
                       entity_id: !input challenge_entity
             default:
               - service: input_text.set_value
                 data:
-                  value: normal
+                  value: "normal"
                 target:
                   entity_id: !input challenge_entity
 
@@ -146,13 +146,13 @@ action:
                 sequence:
                   - service: input_text.set_value
                     data:
-                      value: pre_heat
+                      value: "pre_heat"
                     target:
                       entity_id: !input challenge_entity
             default:
               - service: input_text.set_value
                 data:
-                  value: normal
+                  value: "normal"
                 target:
                   entity_id: !input challenge_entity
             
@@ -160,6 +160,6 @@ action:
     default:
       - service: input_text.set_value
         data:
-          value: normal
+          value: "normal"
         target:
           entity_id: !input challenge_entity
