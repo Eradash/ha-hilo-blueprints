@@ -41,7 +41,6 @@ blueprint:
     water_heater:
       name: Chauffe-eau (optionnel)
       description: Désactive le chauffe-eau durant les défis et les phases d'appréciation de référence
-      default: null
       selector:
         entity:
           domain: switch
@@ -50,7 +49,6 @@ blueprint:
     other_devices_switch:
       name: Autres équipements types SWITCH (optionnel)
       description: Désactive d'autres équipements SWITCH durant les défis et/ou les phases d'appréciation de référence
-      default: null
       selector:
         entity:
           domain: switch
