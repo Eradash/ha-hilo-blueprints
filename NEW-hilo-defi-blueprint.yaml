@@ -161,15 +161,17 @@ action:
               temperature: !input pre_heat_temp
 
       # ---------- Réduction ----------
-      - conditions: >
+      
+- conditions: >
           {{ challenge_state == 'reduction' and window_ok }}
         sequence:
-          - choose:
-              - conditions: "{{ shut_thermostat }}"
-                sequence:
-                  - service: climate.turn_off
-                    target: !input challenge_thermostats
-            default:
+          - if:
+              - condition: template
+                value_template: "{{ shut_thermostat }}"
+            then:
+              - service: climate.turn_off
+                target: !input challenge_thermostats
+            else:
               - service: climate.set_temperature
                 target: !input challenge_thermostats
                 data:
