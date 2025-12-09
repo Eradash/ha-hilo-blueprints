@@ -11,14 +11,15 @@ blueprint:
         entity:
           domain: sensor
 
+
     challenge_thermostats:
       name: Thermostats à gérer (au moins 1 requis)
       selector:
         entity:
           domain: climate
           multiple: true
+    -  required: true
       # Rend la sélection obligatoire (supprime les listes vides)
-      required: true
 
     water_heater_switch:
       name: Interrupteur Chauffe-eau (optionnel)
