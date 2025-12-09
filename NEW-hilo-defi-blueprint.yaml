@@ -147,6 +147,10 @@ variables:
   window_ok: >
     {{ (challenge_am and is_am_window) or (challenge_pm and is_pm_window) }}
 
+  # Cibles des interrupteurs (peuvent être vides)
+  water_heater_target: !input water_heater_switch
+  other_devices_target: !input other_devices_switch
+
 # Pas de condition globale : on gère le filtrage par état ci-dessous
 action:
   - choose:
@@ -174,10 +178,22 @@ action:
                 target: !input challenge_thermostats
                 data:
                   temperature: !input challenge_temp
-          - service: switch.turn_off
-            target: !input water_heater_switch
-          - service: switch.turn_off
-            target: !input other_devices_switch
+
+          # Couper le chauffe-eau si une cible est fournie
+          - if:
+              - condition: template
+                value_template: "{{ water_heater_target | default({}) | length > 0 }}"
+            then:
+              - service: switch.turn_off
+                target: !input water_heater_switch
+
+          # Couper les autres appareils si une cible est fournie
+          - if:
+              - condition: template
+                value_template: "{{ other_devices_target | default({}) | length > 0 }}"
+            then:
+              - service: switch.turn_off
+                target: !input other_devices_switch
 
       # ---------- Appréciation ----------
       - conditions: >
@@ -192,15 +208,24 @@ action:
       - conditions: >
           {{ challenge_state not in ['pre_heat', 'reduction', 'appreciation'] }}
         sequence:
-          # Rallumer les thermostats (si éteints pendant la réduction), puis remettre la température normale
           - service: climate.turn_on
             target: !input challenge_thermostats
           - service: climate.set_temperature
             target: !input challenge_thermostats
             data:
               temperature: !input normal_temp
-          # Rallumer les appareils
-          - service: switch.turn_on
-            target: !input water_heater_switch
-          - service: switch.turn_on
-            target: !input other_devices_switch
+
+          # Rallumer le chauffe-eau si une cible est fournie
+          - if:
+              - condition: template
+                value_template: "{{ water_heater_target | default({}) | length > 0 }}"
+            then:
+              - service: switch.turn_on
+                target: !input water_heater_switch
+
+          # Rallumer les autres appareils si une cible est fournie
+          - if:
+              - condition: template
+                value_template: "{{ other_devices_target | default({}) | length > 0 }}"
+            then:
+              - service: switch.turn_on
