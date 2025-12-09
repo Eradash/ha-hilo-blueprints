@@ -1,6 +1,6 @@
 blueprint:
-  name: Défis Hilo – Automatisation simplifiée
-  description: Gestion des défis Hilo sans vérifications d’heures répétées
+  name: Défis Hilo – Automatisation simplifiée (Ari Version)
+  description: Gestion des défis Hilo sans vérifications horaires internes
   domain: automation
 
   input:
@@ -66,7 +66,7 @@ blueprint:
         boolean: {}
 
     bool_challenge_temp:
-      name: Fermer thermostats pendant réduction (au lieu d’une température)
+      name: Fermer thermostats pendant réduction (au lieu de température)
       default: false
       selector:
         boolean: {}
@@ -136,18 +136,21 @@ action:
 
               # Reduction / On
               - conditions: >
-                  {{ challenge_state in ['reduction','on'] }}
+                  {{ challenge_state in ['reduction', 'on'] }}
                 sequence:
                   - choose:
+                      # IF bool_challenge_temp = true → turn OFF thermostats
                       - conditions: "{{ use_challenge_temp }}"
                         sequence:
                           - service: climate.turn_off
                             target: !input challenge_thermostats
+                    # ELSE: set challenge temperature
                     default:
                       - service: climate.set_temperature
                         target: !input challenge_thermostats
                         data:
                           temperature: !input challenge_temp
+
                   - service: switch.turn_off
                     target: !input water_heater_switch
                   - service: switch.turn_off
@@ -213,18 +216,21 @@ action:
 
               # Reduction / On
               - conditions: >
-                  {{ challenge_state in ['reduction','on'] }}
+                  {{ challenge_state in ['reduction', 'on'] }}
                 sequence:
                   - choose:
+                      # IF bool_challenge_temp = true → turn OFF thermostats
                       - conditions: "{{ use_challenge_temp }}"
                         sequence:
                           - service: climate.turn_off
                             target: !input challenge_thermostats
+                    # ELSE: set challenge temperature
                     default:
                       - service: climate.set_temperature
                         target: !input challenge_thermostats
                         data:
                           temperature: !input challenge_temp
+
                   - service: switch.turn_off
                     target: !input water_heater_switch
                   - service: switch.turn_off
