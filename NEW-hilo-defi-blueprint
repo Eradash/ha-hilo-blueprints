@@ -1,0 +1,224 @@
+blueprint:
+  name: Défis Hilo – Automatisation simplifiée (Ari Version)
+  description: Gestion des défis Hilo sans vérifications horaires internes
+  domain: automation
+
+  input:
+
+    default_challenge_entity:
+      name: Entité du défi Hilo
+      selector:
+        entity:
+          domain: sensor
+
+    challenge_thermostats:
+      name: Thermostats à gérer
+      selector:
+        target:
+          entity:
+            domain: climate
+
+    water_heater_switch:
+      name: Interrupteur Chauffe-eau
+      selector:
+        target:
+          entity:
+            domain: switch
+
+    other_devices_switch:
+      name: Autres appareils à couper (facultatif)
+      default: []
+      selector:
+        target:
+          entity:
+            domain: switch
+
+    # Temperatures
+    normal_temp:
+      name: Température normale
+      default: 21
+
+    appreciation_temp:
+      name: Température pendant appréciation
+      default: 22
+
+    challenge_temp:
+      name: Température pendant réduction
+      default: 19
+
+    pre_heat_temp:
+      name: Température pré-chauffage
+      default: 23
+
+    # Flags
+    do_pre_heat:
+      name: Activer Pré-chauffage
+      default: true
+      selector:
+        boolean: {}
+
+    bool_shut_thermostat:
+      name: Fermer thermostats pendant réduction (au lieu de température)
+      default: false
+      selector:
+        boolean: {}
+
+    challenge_am:
+      name: Le défi est AM
+      default: true
+      selector:
+        boolean: {}
+
+    challenge_pm:
+      name: Le défi est PM
+      default: true
+      selector:
+        boolean: {}
+
+trigger:
+  - platform: state
+    entity_id: !input default_challenge_entity
+
+variables:
+  challenge_state: "{{ states(default_challenge_entity) }}"
+  challenge_am: !input challenge_am
+  challenge_pm: !input challenge_pm
+  do_pre_heat: !input do_pre_heat
+  shut_thermostat: !input bool_shut_thermostat
+
+action:
+  - choose:
+
+      ##########################################################################
+      # 🟦 AM BRANCH — 00:00 → 11:55
+      ##########################################################################
+      - conditions:
+          - "{{ challenge_am }}"
+          - condition: time
+            before: "10:59:00"
+        sequence:
+          - choose:
+
+              # Appreciation
+              - conditions: "{{ challenge_state == 'appreciation' }}"
+                sequence:
+                  - service: climate.set_temperature
+                    target: !input challenge_thermostats
+                    data:
+                      temperature: !input appreciation_temp
+                  - service: switch.turn_on
+                    target: !input water_heater_switch
+                  - service: switch.turn_on
+                    target: !input other_devices_switch
+
+              # Reduction / On
+              - conditions: "{{ challenge_state == 'reduction' }}"
+                sequence:
+                  - choose:
+                      # IF bool_shut_thermostat = true → turn OFF thermostats
+                      - conditions: "{{ shut_thermostat }}"
+                        sequence:
+                          - service: climate.turn_off
+                            target: !input challenge_thermostats
+                    # ELSE: set challenge temperature
+                    default:
+                      - service: climate.set_temperature
+                        target: !input challenge_thermostats
+                        data:
+                          temperature: !input challenge_temp
+                  - service: switch.turn_off
+                    target: !input water_heater_switch
+                  - service: switch.turn_off
+                    target: !input other_devices_switch
+
+              # Pre-heat
+              - conditions: >
+              - conditions: "{{ challenge_state == 'pre_heat' }}"
+                sequence:
+                  - service: climate.set_temperature
+                    target: !input challenge_thermostats
+                    data:
+                      temperature: !input pre_heat_temp
+                  - service: switch.turn_on
+                    target: !input water_heater_switch
+                  - service: switch.turn_on
+                    target: !input other_devices_switch
+
+            # AM fallback
+            default:
+              - service: climate.set_temperature
+                target: !input challenge_thermostats
+                data:
+                  temperature: !input normal_temp
+              - service: switch.turn_on
+                target: !input water_heater_switch
+              - service: switch.turn_on
+                target: !input other_devices_switch
+
+      ##########################################################################
+      # 🟧 PM BRANCH — 11:55 → 23:59
+      ##########################################################################
+      - conditions:
+          - "{{ challenge_pm }}"
+          - condition: time
+            after: "10:59:00"
+        sequence:
+          - choose:
+
+              # Appreciation
+              - conditions: "{{ challenge_state == 'appreciation' }}"
+                sequence:
+                  - service: climate.set_temperature
+                    target: !input challenge_thermostats
+                    data:
+                      temperature: !input appreciation_temp
+                  - service: switch.turn_on
+                    target: !input water_heater_switch
+                  - service: switch.turn_on
+                    target: !input other_devices_switch
+
+              # Reduction / On
+              - conditions: "{{ challenge_state == 'reduction' }}"
+                sequence:
+                  - choose:
+                      # IF bool_shut_thermostat = true → turn OFF thermostats
+                      - conditions: "{{ shut_thermostat }}"
+                        sequence:
+                          - service: climate.turn_off
+                            target: !input challenge_thermostats
+                    # ELSE: set challenge temperature
+                    default:
+                      - service: climate.set_temperature
+                        target: !input challenge_thermostats
+                        data:
+                          temperature: !input challenge_temp
+                  - service: switch.turn_off
+                    target: !input water_heater_switch
+                  - service: switch.turn_off
+                    target: !input other_devices_switch
+
+              # Pre-heat
+              - conditions: >
+              - conditions: "{{ challenge_state == 'pre_heat' }}"
+                sequence:
+                  - service: climate.set_temperature
+                    target: !input challenge_thermostats
+                    data:
+                      temperature: !input pre_heat_temp
+                  - service: switch.turn_on
+                    target: !input water_heater_switch
+                  - service: switch.turn_on
+                    target: !input other_devices_switch
+
+            # PM fallback
+            default:
+              - service: climate.set_temperature
+                target: !input challenge_thermostats
+                data:
+                  temperature: !input normal_temp
+              - service: switch.turn_on
+                target: !input water_heater_switch
+              - service: switch.turn_on
+                target: !input other_devices_switch
+
+mode: restart
