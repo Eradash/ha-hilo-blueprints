@@ -18,7 +18,6 @@ blueprint:
         target:
           entity:
             domain: climate
-            multiple: true
 
     water_heater_switch:
       name: Interrupteur Chauffe-eau
@@ -27,7 +26,6 @@ blueprint:
         target:
           entity:
             domain: switch
-            multiple: true
 
     other_devices_switch:
       name: Autres appareils à couper (facultatif)
@@ -36,7 +34,6 @@ blueprint:
         target:
           entity:
             domain: switch
-            multiple: true
 
     # Temperatures
     normal_temp:
@@ -193,7 +190,7 @@ action:
 
       # ---------- Fin du défi : remise à la normale ----------
       - conditions: >
-          {{ challenge_state in ['completed', 'off'] }}
+          {{ challenge_state not in ['pre_heat', 'reduction', 'appreciation'] }}
         sequence:
           # Rallumer les thermostats (si éteints pendant la réduction), puis remettre la température normale
           - service: climate.turn_on
