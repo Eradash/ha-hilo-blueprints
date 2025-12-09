@@ -162,7 +162,7 @@ action:
 
       # ---------- Réduction ----------
       
-- conditions: >
+      - conditions: >
           {{ challenge_state == 'reduction' and window_ok }}
         sequence:
           - if:
