@@ -34,7 +34,7 @@ blueprint:
           entity:
             domain: switch
 
-    # Temperatures
+    # Températures
     normal_temp:
       name: Température normale
       default: 21
@@ -160,7 +160,6 @@ action:
               temperature: !input pre_heat_temp
 
       # ---------- Réduction ----------
-      
       - conditions: >
           {{ challenge_state == 'reduction' and window_ok }}
         sequence:
