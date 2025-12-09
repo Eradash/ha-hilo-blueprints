@@ -18,7 +18,7 @@ blueprint:
         entity:
           domain: climate
           multiple: true
-    -  required: true
+    #-  required: true
       # Rend la sélection obligatoire (supprime les listes vides)
 
     water_heater_switch:
