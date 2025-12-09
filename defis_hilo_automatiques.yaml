@@ -287,14 +287,9 @@ action:
                 sequence:
                   - choose:
                       - conditions:
-                          - condition: or
-                            conditions:
-                              - condition: state
-                                entity_id: !input default_challenge_entity
-                                state: "reduction"
-                              - condition: state
-                                entity_id: !input default_challenge_entity
-                                state: "on"
+                          - condition: state
+                            entity_id: !input default_challenge_entity
+                            state: "reduction"
                         sequence:
                           - choose:
                               - conditions:
