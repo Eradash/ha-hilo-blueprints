@@ -58,14 +58,14 @@ blueprint:
 
     bool_ref_water_heater:
       name: Chauffe eau - Défis seulement ou Refroidissment et Défis
-      description: Désactive le chauffe eaux durant les défis seulement (False) ou désactiver durant la phase de refroidissement, puis réactivation durant la phase d'appréciation avant de désactiver pour les défis (True)
+      description: Désactive le chauffe eaux durant les défis seulement (False) ou désactiver durant la phase de refroidissement, puis réactivation durant la phase d'appréciation avant de désact[...]
       default: false
       selector:
         boolean:
 
     bool_ref_other_switch:
       name: Autres Équipements - Défis seulement ou Refroidissment et Défis
-      description: Désactive les autres équipements durant les défis seulement (False) ou désactiver durant la phase de refroidissement, puis réactivation durant la phase d'appréciation avant de désactiver pour les défis (True)
+      description: Désactive les autres équipements durant les défis seulement (False) ou desactiver durant la phase de refroidissement, puis réactivation durant la phase d'appréciation avant de[...]
       default: false
       selector:
         boolean:
@@ -158,10 +158,9 @@ triggers:
   - trigger: time_pattern
     hours: "*"
     minutes: "0"
-    seconds: "30"
+    seconds: "15"
   - trigger: state
     entity_id: !input default_challenge_entity
-      
 
 variables:
   do_pre_heat: !input do_pre_heat
@@ -175,22 +174,259 @@ variables:
 
 action:
   - choose:
+      # AM branch: only if challenge_am is enabled AND time is between 00:00 and 10:55
       - conditions:
-          - condition: or
+          - condition: and
             conditions:
-              - condition: and
-                conditions:
-                  - condition: template
-                    value_template: "{{ challenge_pm }}"
-                  - condition: time
-                    after: "10:55:00"
-              - condition: and
-                conditions:
-                  - condition: template
-                    value_template: "{{ challenge_am }}"
-                  - condition: time
-                    before: "10:55:00"
+              - condition: template
+                value_template: "{{ challenge_am | bool }}"
+              - condition: time
+                after: "00:00:00"
+                before: "10:55:00"
+        sequence:
+          - choose:
+              #Condition d'APPRECIATION ou de REF-APPRECIATION#
+              - conditions:
+                  - condition: or
+                    conditions:
+                      - condition: time
+                        after: "01:00:00"
+                        before: "04:00:00"
+                      - condition: time
+                        after: "12:00:00"
+                        before: "14:00:00"
+                sequence:
+                  - choose:
+                      - conditions:
+                          - condition: state
+                            entity_id: !input default_challenge_entity
+                            state: "appreciation"
+                        sequence:
+                          - service: climate.set_temperature
+                            data:
+                              temperature: !input appreciation_temp
+                            target:
+                              entity_id: !input thermostats
+                          - choose:
+                              - conditions: "{{ water_heater is not none and water_heater | length > 0 and none not in water_heater }}"
+                                sequence:
+                                  - service: switch.turn_on
+                                    target:
+                                      entity_id: !input water_heater
+                          - choose:
+                              - conditions: "{{ other_devices_switch is not none and other_devices_switch | length > 0 and none not in other_devices_switch }}"
+                                sequence:
+                                  - service: switch.turn_on
+                                    target:
+                                      entity_id: !input other_devices_switch
+                    default:
+                      - service: climate.set_temperature
+                        data:
+                          temperature: !input appreciation_reference_temp
+                        target:
+                          entity_id: !input thermostats
+                      - choose:
+                          - conditions: "{{ water_heater is not none and water_heater | length > 0 and none not in water_heater }}"
+                            sequence:
+                              - service: switch.turn_on
+                                target:
+                                  entity_id: !input water_heater
+                      - choose:
+                          - conditions: "{{ other_devices_switch is not none and other_devices_switch | length > 0 and none not in other_devices_switch }}"
+                            sequence:
+                              - service: switch.turn_on
+                                target:
+                                  entity_id: !input other_devices_switch
 
+              #Condition de PRE-COLD si active dans l'integration Hilo#
+              - conditions:
+                  - condition: state
+                    entity_id: !input default_challenge_entity
+                    state: "pre_cold"
+                sequence:
+                  - service: climate.set_temperature
+                    data:
+                      temperature: !input cooling_temp
+                    target:
+                      entity_id: !input thermostats
+                  - choose:
+                      - conditions:
+                          - "{{ water_heater is not none and water_heater | length > 0 and none not in water_heater }}"
+                          - "{{ bool_ref_water_heater | bool }}"
+                        sequence:
+                          - service: switch.turn_off
+                            target:
+                              entity_id: !input water_heater
+                  - choose:
+                      - conditions:
+                          - "{{ other_devices_switch is not none and other_devices_switch | length > 0 and none not in other_devices_switch }}"
+                          - "{{ bool_ref_other_switch | bool }}"
+                        sequence:
+                          - service: switch.turn_off
+                            target:
+                              entity_id: !input other_devices_switch
+
+              # Condition de REF-REDUCTION ou REDUCTION (DEFI)#
+              - conditions:
+                  - condition: or
+                    conditions:
+                      - condition: time
+                        after: "06:00:00"
+                        before: "10:00:00"
+                      - condition: time
+                        after: "16:00:00"
+                        before: "20:00:00"
+                sequence:
+                  - choose:
+                      - conditions:
+                          - condition: or
+                            conditions:
+                              - condition: state
+                                entity_id: !input default_challenge_entity
+                                state: "reduction"
+                              - condition: state
+                                entity_id: !input default_challenge_entity
+                                state: "on"
+                        sequence:
+                          - choose:
+                              - conditions:
+                                  - condition: template
+                                    value_template: "{{ bool_challenge_temp | bool }}"
+                                sequence:
+                                  - service: climate.turn_off
+                                    target:
+                                      entity_id: !input thermostats
+                              - conditions:
+                                  - condition: template
+                                    value_template: "{{ not bool_challenge_temp | bool }}"
+                                sequence:
+                                  - service: climate.set_temperature
+                                    data:
+                                      temperature: !input challenge_temp
+                                    target:
+                                      entity_id: !input thermostats
+                          - choose:
+                              - conditions: "{{ water_heater is not none and water_heater | length > 0 and none not in water_heater }}"
+                                sequence:
+                                  - service: switch.turn_off
+                                    target:
+                                      entity_id: !input water_heater
+                          - choose:
+                              - conditions: "{{ other_devices_switch is not none and other_devices_switch | length > 0 and none not in other_devices_switch }}"
+                                sequence:
+                                  - service: switch.turn_off
+                                    target:
+                                      entity_id: !input other_devices_switch
+                    default:
+                      - service: climate.set_temperature
+                        data:
+                          temperature: !input reference_temp
+                        target:
+                          entity_id: !input thermostats
+                      - choose:
+                          - conditions: "{{ water_heater is not none and water_heater | length > 0 and none not in water_heater }}"
+                            sequence:
+                              - service: switch.turn_on
+                                target:
+                                  entity_id: !input water_heater
+                      - choose:
+                          - conditions: "{{ other_devices_switch is not none and other_devices_switch | length > 0 and none not in other_devices_switch }}"
+                            sequence:
+                              - service: switch.turn_on
+                                target:
+                                  entity_id: !input other_devices_switch
+
+              #Condition de PRE-HEAT si active#
+              - conditions:
+                  - condition: or
+                    conditions:
+                      - condition: time
+                        after: "04:00:00"
+                        before: "06:00:00"
+                      - condition: time
+                        after: "14:00:00"
+                        before: "16:00:00"
+                sequence:
+                  - choose:
+                      - conditions:
+                          - condition: state
+                            entity_id: !input default_challenge_entity
+                            state: "pre_heat"
+                          - condition: template
+                            value_template: "{{ do_pre_heat | bool }}"
+                        sequence:
+                          - service: climate.set_temperature
+                            data:
+                              temperature: !input preheat_temp
+                            target:
+                              entity_id: !input thermostats
+                          - choose:
+                              - conditions: "{{ water_heater is not none and water_heater | length > 0 and none not in water_heater }}"
+                                sequence:
+                                  - service: switch.turn_on
+                                    target:
+                                      entity_id: !input water_heater
+                          - choose:
+                              - conditions: "{{ other_devices_switch is not none and other_devices_switch | length > 0 and none not in other_devices_switch }}"
+                                sequence:
+                                  - service: switch.turn_on
+                                    target:
+                                      entity_id: !input other_devices_switch
+                    default:
+                      - service: climate.set_temperature
+                        data:
+                          temperature: !input normal_temp
+                        target:
+                          entity_id: !input thermostats
+                      - choose:
+                          - conditions: "{{ water_heater is not none and water_heater | length > 0 and none not in water_heater }}"
+                            sequence:
+                              - service: switch.turn_on
+                                target:
+                                  entity_id: !input water_heater
+                      - choose:
+                          - conditions: "{{ other_devices_switch is not none and other_devices_switch | length > 0 and none not in other_devices_switch }}"
+                            sequence:
+                              - service: switch.turn_on
+                                target:
+                                  entity_id: !input other_devices_switch
+
+            default:
+              #- service: climate.turn_on
+                #target:
+                  #entity_id: !input thermostats
+              - service: climate.set_hvac_mode
+                data:
+                  hvac_mode: heat
+                target:
+                  entity_id: !input thermostats
+              - service: climate.set_temperature
+                data:
+                  temperature: !input normal_temp
+                target:
+                  entity_id: !input thermostats
+              - choose:
+                  - conditions: "{{ water_heater is not none and water_heater | length > 0 and none not in water_heater }}"
+                    sequence:
+                      - service: switch.turn_on
+                        target:
+                          entity_id: !input water_heater
+              - choose:
+                  - conditions: "{{ other_devices_switch is not none and other_devices_switch | length > 0 and none not in other_devices_switch }}"
+                    sequence:
+                      - service: switch.turn_on
+                        target:
+                          entity_id: !input other_devices_switch
+
+      # PM branch: only if challenge_pm is enabled AND time is between 10:55 and midnight
+      - conditions:
+          - condition: and
+            conditions:
+              - condition: template
+                value_template: "{{ challenge_pm | bool }}"
+              - condition: time
+                after: "10:55:00"
+                before: "00:00:00"
         sequence:
           - choose:
               #Condition d'APPRECIATION ou de REF-APPRECIATION#
