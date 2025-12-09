@@ -27,6 +27,8 @@ Installez les Blueprints avec ces liens :
 
 - Défis automatiques :  
   [![Importer le Blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fraw.githubusercontent.com%2Farim215%2Fha-hilo-blueprints%2Fmain%2Fdefis_hilo_automatiques.yaml)  
+- Nouveau défis automatiques  simplifié:  
+  [![Importer le Blueprint](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fraw.githubusercontent.com%2Farim215%2Fha-hilo-blueprints%2Fmain%2FNEW-hilo-defi-blueprint.yaml)  
 
 ---
 
