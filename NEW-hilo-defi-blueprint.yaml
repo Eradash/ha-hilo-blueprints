@@ -149,9 +149,10 @@ variables:
     {{ (challenge_am and is_am_window) or (challenge_pm and is_pm_window) }}
 
   # Comptages sécurisés pour éviter les cibles vides
-  thermostat_count: "{{ (!input challenge_thermostats | default([])) | count }}"
-  water_heater_count: "{{ (!input water_heater_switch | default([])) | count }}"
-  other_devices_count: "{{ (!input other_devices_switch | default([])) | count }}"
+  thermostat_count: "{{ (challenge_thermostats | default([], true)) | count }}"
+  water_heater_count: "{{ (water_heater_switch | default([], true)) | count }}"
+  other_devices_count: "{{ (other_devices_switch | default([], true)) | count }}"
+
 
 action:
   - choose:
