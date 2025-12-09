@@ -49,7 +49,8 @@ blueprint:
           unit_of_measurement: °C
 
     appreciation_temp:
-      name: Température pendant appréciation
+      name: Température pendant appréciation 
+      description: 1 a 3AM et 12 a 2PM si appréciation est configuré à 2h dans l'intégration Hilo
       default: 22
       selector:
         number:
@@ -58,9 +59,10 @@ blueprint:
           max: 30
           unit_of_measurement: °C
 
-    challenge_temp:
-      name: Température pendant réduction
-      default: 19
+    pre_heat_temp:
+      name: Température pré-chauffage 
+      description: 2h avant Réduction/Défi
+      default: 23
       selector:
         number:
           step: 0.5
@@ -68,9 +70,9 @@ blueprint:
           max: 30
           unit_of_measurement: °C
 
-    pre_heat_temp:
-      name: Température pré-chauffage
-      default: 23
+    challenge_temp:
+      name: Température pendant Réduction/Défi
+      default: 19
       selector:
         number:
           step: 0.5
@@ -87,18 +89,19 @@ blueprint:
 
     bool_shut_thermostat:
       name: Fermer thermostats pendant réduction (au lieu de régler une température)
+      description: Désactive les thermostats durant la phase de réducition au lieu de réduire la température (True)
       default: false
       selector:
         boolean: {}
 
     challenge_am:
-      name: Le défi est AM
+      name: Défis AM
       default: true
       selector:
         boolean: {}
 
     challenge_pm:
-      name: Le défi est PM
+      name: Défis PM
       default: true
       selector:
         boolean: {}
