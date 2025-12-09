@@ -6,21 +6,22 @@ blueprint:
 
   input:
     default_challenge_entity:
-      name: Entité du défi Hilo
+      name: Entité du défi Hilo (capteur d'état)
       selector:
         entity:
           domain: sensor
 
     challenge_thermostats:
-      name: Thermostats à gérer
-      default: []
+      name: Thermostats à gérer (au moins 1 requis)
       selector:
         entity:
           domain: climate
           multiple: true
+      # Rend la sélection obligatoire (supprime les listes vides)
+      required: true
 
     water_heater_switch:
-      name: Interrupteur Chauffe-eau
+      name: Interrupteur Chauffe-eau (optionnel)
       default: []
       selector:
         entity:
@@ -28,7 +29,7 @@ blueprint:
           multiple: true
 
     other_devices_switch:
-      name: Autres appareils à couper (facultatif)
+      name: Autres appareils à couper (optionnel)
       default: []
       selector:
         entity:
@@ -84,7 +85,7 @@ blueprint:
         boolean: {}
 
     bool_shut_thermostat:
-      name: Fermer thermostats pendant réduction (au lieu de température)
+      name: Fermer thermostats pendant réduction (au lieu de régler une température)
       default: false
       selector:
         boolean: {}
@@ -110,11 +111,20 @@ variables:
   challenge_entity: !input default_challenge_entity
   challenge_state: "{{ states(challenge_entity) | lower }}"
 
-  # Sélection utilisateur
-  challenge_am: !input challenge_am
-  challenge_pm: !input challenge_pm
-  do_pre_heat: !input do_pre_heat
-  shut_thermostat: !input bool_shut_thermostat
+  # Sélection utilisateur (flags)
+  challenge_am_flag: !input challenge_am
+  challenge_pm_flag: !input challenge_pm
+  do_pre_heat_flag: !input do_pre_heat
+  shut_thermostat_flag: !input bool_shut_thermostat
+
+  # Cibles (affectations directes des inputs — pas dans un template)
+  challenge_thermostats_var: !input challenge_thermostats
+  water_heater_switch_var: !input water_heater_switch
+  other_devices_switch_var: !input other_devices_switch
+
+  # Comptages sécurisés pour interrupteurs optionnels
+  water_heater_count: "{{ (water_heater_switch_var | default([], true)) | count }}"
+  other_devices_count: "{{ (other_devices_switch_var | default([], true)) | count }}"
 
   # Heure courante (locale HA)
   hour: "{{ now().hour }}"
@@ -146,12 +156,7 @@ variables:
 
   # Autorisation en fonction du choix AM/PM et de la fenêtre active
   window_ok: >
-    {{ (challenge_am and is_am_window) or (challenge_pm and is_pm_window) }}
-
-  # Comptages sécurisés pour éviter les cibles vides
-  thermostat_count: "{{ (challenge_thermostats | default([], true)) | count }}"
-  water_heater_count: "{{ (water_heater_switch | default([], true)) | count }}"
-  other_devices_count: "{{ (other_devices_switch | default([], true)) | count }}"
+    {{ (challenge_am_flag and is_am_window) or (challenge_pm_flag and is_pm_window) }}
 
 
 action:
@@ -159,7 +164,7 @@ action:
       # ---------- Pré-chauffage ----------
       - conditions:
           - condition: template
-            value_template: "{{ challenge_state == 'pre_heat' and do_pre_heat and window_ok and thermostat_count > 0 }}"
+            value_template: "{{ challenge_state == 'pre_heat' and do_pre_heat_flag and window_ok }}"
         sequence:
           - service: climate.set_temperature
             target:
@@ -175,21 +180,17 @@ action:
           # Thermostats: soit Off, soit Température de réduction
           - if:
               - condition: template
-                value_template: "{{ shut_thermostat and thermostat_count > 0 }}"
+                value_template: "{{ shut_thermostat_flag }}"
             then:
               - service: climate.turn_off
                 target:
                   entity_id: !input challenge_thermostats
             else:
-              - if:
-                  - condition: template
-                    value_template: "{{ thermostat_count > 0 }}"
-                then:
-                  - service: climate.set_temperature
-                    target:
-                      entity_id: !input challenge_thermostats
-                    data:
-                      temperature: !input challenge_temp
+              - service: climate.set_temperature
+                target:
+                  entity_id: !input challenge_thermostats
+                data:
+                  temperature: !input challenge_temp
 
           # Couper le chauffe-eau si une cible est fournie
           - if:
@@ -212,7 +213,7 @@ action:
       # ---------- Appréciation ----------
       - conditions:
           - condition: template
-            value_template: "{{ challenge_state == 'appreciation' and window_ok and thermostat_count > 0 }}"
+            value_template: "{{ challenge_state == 'appreciation' and window_ok }}"
         sequence:
           - service: climate.set_temperature
             target:
@@ -225,18 +226,14 @@ action:
           - condition: template
             value_template: "{{ challenge_state not in ['pre_heat', 'reduction', 'appreciation'] }}"
         sequence:
-          - if:
-              - condition: template
-                value_template: "{{ thermostat_count > 0 }}"
-            then:
-              - service: climate.turn_on
-                target:
-                  entity_id: !input challenge_thermostats
-              - service: climate.set_temperature
-                target:
-                  entity_id: !input challenge_thermostats
-                data:
-                  temperature: !input normal_temp
+          - service: climate.turn_on
+            target:
+              entity_id: !input challenge_thermostats
+          - service: climate.set_temperature
+            target:
+              entity_id: !input challenge_thermostats
+            data:
+              temperature: !input normal_temp
 
           # Rallumer le chauffe-eau si une cible est fournie
           - if:
@@ -254,3 +251,5 @@ action:
             then:
               - service: switch.turn_on
                 target:
+                  entity_id: !input other_devices_switch
+mode: single
