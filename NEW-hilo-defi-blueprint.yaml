@@ -1,4 +1,3 @@
-
 blueprint:
   name: Défis Hilo – Automatisation simplifiée (Ari Version)
   description: Gestion des défis Hilo avec filtrage AM/PM et remise à la normale en fin de défi
