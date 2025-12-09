@@ -77,8 +77,8 @@ blueprint:
       selector:
         number:
           step: 0.5
-          min: 15
-          max: 25
+          min: 10
+          max: 30
           unit_of_measurement: °C
 
     reference_temp:
@@ -88,8 +88,8 @@ blueprint:
       selector:
         number:
           step: 0.5
-          min: 15
-          max: 25
+          min: 10
+          max: 30
           unit_of_measurement: °C
 
     cooling_temp:
@@ -99,8 +99,8 @@ blueprint:
       selector:
         number:
           step: 0.5
-          min: 15
-          max: 25
+          min: 10
+          max: 30
           unit_of_measurement: °C
 
     appreciation_reference_temp:
@@ -110,8 +110,8 @@ blueprint:
       selector:
         number:
           step: 0.5
-          min: 15
-          max: 25
+          min: 10
+          max: 30
           unit_of_measurement: °C
 
     appreciation_temp:
@@ -121,8 +121,8 @@ blueprint:
       selector:
         number:
           step: 0.5
-          min: 15
-          max: 25
+          min: 10
+          max: 30
           unit_of_measurement: °C
 
     preheat_temp:
@@ -132,8 +132,8 @@ blueprint:
       selector:
         number:
           step: 0.5
-          min: 15
-          max: 25
+          min: 10
+          max: 30
           unit_of_measurement: °C
 
     challenge_temp:
@@ -143,8 +143,8 @@ blueprint:
       selector:
         number:
           step: 0.5
-          min: 15
-          max: 25
+          min: 10
+          max: 30
           unit_of_measurement: °C
 
     bool_challenge_temp:
@@ -161,12 +161,7 @@ triggers:
     seconds: "30"
   - trigger: state
     entity_id: !input default_challenge_entity
-    to: 
-      - "pre_cold"
-      - "appreciation"
-      - "pre_heat"
-      - "reduction"
-      - "recovery"
+      
 
 variables:
   do_pre_heat: !input do_pre_heat
@@ -188,13 +183,13 @@ action:
                   - condition: template
                     value_template: "{{ challenge_pm }}"
                   - condition: time
-                    after: "11:55:00"
+                    after: "10:55:00"
               - condition: and
                 conditions:
                   - condition: template
                     value_template: "{{ challenge_am }}"
                   - condition: time
-                    before: "11:55:00"
+                    before: "10:55:00"
 
         sequence:
           - choose:
