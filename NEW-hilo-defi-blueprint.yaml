@@ -13,6 +13,7 @@ blueprint:
 
     challenge_thermostats:
       name: Thermostats à gérer
+      default: []
       selector:
         target:
           entity:
@@ -21,6 +22,7 @@ blueprint:
           
     water_heater_switch:
       name: Interrupteur Chauffe-eau
+      default: []
       selector:
         target:
           entity:
