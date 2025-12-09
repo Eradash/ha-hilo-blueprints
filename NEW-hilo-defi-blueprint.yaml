@@ -40,7 +40,7 @@ blueprint:
     # Températures
     normal_temp:
       name: Température normale
-      default: 21
+      default: 19
       selector:
         number:
           step: 0.5
@@ -51,7 +51,7 @@ blueprint:
     appreciation_temp:
       name: Température pendant appréciation 
       description: 1 a 3AM et 12 a 2PM si appréciation est configuré à 2h dans l'intégration Hilo
-      default: 22
+      default: 21
       selector:
         number:
           step: 0.5
@@ -62,7 +62,7 @@ blueprint:
     pre_heat_temp:
       name: Température pré-chauffage 
       description: 2h avant Réduction/Défi
-      default: 23
+      default: 21
       selector:
         number:
           step: 0.5
@@ -72,7 +72,7 @@ blueprint:
 
     challenge_temp:
       name: Température pendant Réduction/Défi
-      default: 19
+      default: 17
       selector:
         number:
           step: 0.5
