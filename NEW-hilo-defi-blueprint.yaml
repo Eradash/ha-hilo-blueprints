@@ -17,13 +17,15 @@ blueprint:
         target:
           entity:
             domain: climate
-
+            multiple: true
+          
     water_heater_switch:
       name: Interrupteur Chauffe-eau
       selector:
         target:
           entity:
             domain: switch
+            multiple: true
 
     other_devices_switch:
       name: Autres appareils à couper (facultatif)
@@ -32,6 +34,7 @@ blueprint:
         target:
           entity:
             domain: switch
+            multiple: true
 
     # Temperatures
     normal_temp:
