@@ -37,19 +37,43 @@ blueprint:
     normal_temp:
       name: Température normale
       default: 21
-
+      selector:
+        number:
+          step: 0.5
+          min: 10
+          max: 30
+          unit_of_measurement: °C
+          
     appreciation_temp:
       name: Température pendant appréciation
       default: 22
-
+      selector:
+        number:
+          step: 0.5
+          min: 10
+          max: 30
+          unit_of_measurement: °C
+          
     challenge_temp:
       name: Température pendant réduction
       default: 19
-
+      selector:
+        number:
+          step: 0.5
+          min: 10
+          max: 30
+          unit_of_measurement: °C
+          
     pre_heat_temp:
       name: Température pré-chauffage
       default: 23
-
+      selector:
+        number:
+          step: 0.5
+          min: 10
+          max: 30
+          unit_of_measurement: °C
+          
     # Flags
     do_pre_heat:
       name: Activer Pré-chauffage
