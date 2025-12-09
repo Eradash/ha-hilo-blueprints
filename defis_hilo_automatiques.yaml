@@ -4,6 +4,7 @@ blueprint:
   domain: automation
 
   input:
+  
     default_challenge_entity:
       name: Entité de Défi de Hilo par default
       selector:
@@ -15,21 +16,21 @@ blueprint:
       description: Pré-chauffer avant la réduction (équivalent au pré-chauffage de l'appli Hilo)
       default: true
       selector:
-        boolean:
+        boolean: {}
 
     challenge_am:
       name: Défi AM
       description: Va participer aux défis AM (incluant la référence)
       default: true
       selector:
-        boolean:
+        boolean: {}
 
     challenge_pm:
       name: Défi PM
       description: Va participer aux défis PM (incluant la référence)
       default: true
       selector:
-        boolean:
+        boolean: {}
 
     thermostats:
       name: Thermostats
@@ -61,14 +62,14 @@ blueprint:
       description: Désactive le chauffe eaux durant les défis seulement (False) ou désactiver durant la phase de refroidissement, puis réactivation durant la phase d'appréciation avant de désactiver pour les défis (True)
       default: false
       selector:
-        boolean:
+        boolean: {}
 
     bool_ref_other_switch:
       name: Autres Équipements - Défis seulement ou Refroidissment et Défis
       description: Désactive les autres équipements durant les défis seulement (False) ou désactiver durant la phase de refroidissement, puis réactivation durant la phase d'appréciation avant de désactiver pour les défis (True)
       default: false
       selector:
-        boolean:
+        boolean: {}
 
     normal_temp:
       name: Température normale
