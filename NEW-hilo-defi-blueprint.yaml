@@ -169,11 +169,11 @@ action:
                 sequence:
                   - service: climate.turn_off
                     target: !input challenge_thermostats
-              - default:
-                  - service: climate.set_temperature
-                    target: !input challenge_thermostats
-                    data:
-                      temperature: !input challenge_temp
+            default:
+              - service: climate.set_temperature
+                target: !input challenge_thermostats
+                data:
+                  temperature: !input challenge_temp
           - service: switch.turn_off
             target: !input water_heater_switch
           - service: switch.turn_off
