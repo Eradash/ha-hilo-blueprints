@@ -21,7 +21,6 @@ blueprint:
     default_challenge_entity:
       name: Entité de défi par défaut de l'intégration (pour la phase de refroidissement)
       selector:
-      selector:
         entity:
           domain: sensor
 
